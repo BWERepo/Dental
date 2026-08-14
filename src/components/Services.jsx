@@ -14,6 +14,7 @@ export default function Services() {
       <div className="container">
         <Reveal>
           <SectionHeading
+            index={2}
             eyebrow="What we do"
             heading="Everyday dentistry, done properly"
             intro="Three things make up most of our week. Everything else is listed underneath."
@@ -22,8 +23,16 @@ export default function Services() {
 
         <div className={`services__grid ${services.length < 3 ? 'services__grid--wide' : ''}`}>
           {services.map((service, index) => (
-            <Reveal key={service.title} delay={index * 90}>
-              <ServiceCard {...service} />
+            <Reveal key={service.slug} id={service.slug} delay={index * 90}>
+              <ServiceCard
+                title={service.name}
+                description={service.short}
+                image={service.image}
+                alt={service.alt}
+                icon={service.icon}
+                urgent={service.urgent}
+                index={index + 1}
+              />
             </Reveal>
           ))}
         </div>

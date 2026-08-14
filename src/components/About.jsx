@@ -9,11 +9,18 @@ export default function About() {
     <section className="section section--neutral" id="about">
       <div className="container about__grid">
         <Reveal className="about__media">
-          <img src={about.image} alt={about.imageAlt} loading="lazy" width="1200" height="1500" />
+          <img src={about.image} alt={about.imageAlt} loading="lazy" width="1200" height="800" />
         </Reveal>
 
+        {/* A gradient plate set behind and offset from the photograph. It is
+            what stops this section reading as a stock image in a box. */}
+        <span className="about__plate" aria-hidden="true" />
+
         <Reveal className="about__body" delay={80}>
-          <p className="about__eyebrow">{about.eyebrow}</p>
+          <p className="about__eyebrow">
+            <span className="about__index">02</span>
+            {about.eyebrow}
+          </p>
           <h2 className="about__title">{about.heading}</h2>
 
           {about.paragraphs.map((paragraph) => (

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
  * Wraps children in a div that fades up once when it first scrolls into view.
  * Falls back to simply showing the content if IntersectionObserver is missing.
  */
-export default function Reveal({ children, delay = 0, className = '', as: Tag = 'div' }) {
+export default function Reveal({ children, delay = 0, className = '', id, as: Tag = 'div' }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -41,6 +41,7 @@ export default function Reveal({ children, delay = 0, className = '', as: Tag = 
   return (
     <Tag
       ref={ref}
+      id={id}
       className={`reveal ${visible ? 'is-visible' : ''} ${className}`.trim()}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >

@@ -1,0 +1,103 @@
+.insurance__panel {
+  padding: var(--s-4);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-xl);
+  background: #fff;
+  box-shadow: var(--sh-rest);
+}
+
+.insurance__providers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s-2);
+}
+
+.insurance__provider {
+  padding: 13px var(--s-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-sm);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t), color var(--t),
+    box-shadow var(--t), transform var(--t);
+}
+
+.insurance__provider:hover {
+  border-color: var(--c-brand);
+  transform: translateY(-2px);
+}
+
+.insurance__provider.is-selected {
+  background: var(--g-brand);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--sh-glow);
+}
+
+/* The "no insurance" choice spans the row, because it is not one more insurer
+   in the list — it is the other answer to the question. */
+.insurance__provider--none {
+  grid-column: 1 / -1;
+  border-style: dashed;
+}
+
+/* --- The answer ------------------------------------------------------------ */
+.insurance__result {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  min-height: 96px;
+  margin-top: var(--s-4);
+  padding: var(--s-4);
+  border-radius: var(--r-lg);
+  background: var(--c-brandSoft);
+}
+
+.insurance__result-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--g-brand);
+  color: #fff;
+}
+
+.insurance__result-text {
+  color: var(--c-ink);
+  font-size: 1.02rem;
+}
+
+.insurance__result-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  color: var(--c-inkSoft);
+  font-size: 0.85rem;
+}
+
+.insurance__result-placeholder {
+  margin: auto 0;
+  color: var(--c-inkSoft);
+  font-size: 0.98rem;
+}
+
+.insurance__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+}
+
+@media (min-width: 900px) {
+  .insurance__panel {
+    padding: var(--s-6);
+  }
+}

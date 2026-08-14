@@ -1,10 +1,75 @@
 .footer {
+  position: relative;
+  /* Room for the closing panel, which is pulled up out of the footer. */
   padding-top: var(--s-7);
-  background: var(--c-secondary);
+  background: var(--g-panel);
   color: rgba(255, 255, 255, 0.72);
 }
 
+/* A thin aqua-to-violet rule that closes the page off. */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--g-accent);
+}
+
+/* --- Closing call to action ------------------------------------------------
+   Pulled up so it straddles the seam between the last section and the footer,
+   which is what makes the page feel designed rather than stacked. */
+.footer__cta {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--s-4);
+  margin-bottom: var(--s-6);
+  padding: var(--s-5) var(--s-4);
+  border-radius: var(--r-xl);
+  background: var(--g-brand);
+  box-shadow: 0 30px 70px rgba(6, 42, 38, 0.35);
+  overflow: hidden;
+}
+
+.footer__cta-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.footer__cta-heading {
+  color: #fff;
+}
+
+.footer__cta-copy p {
+  margin-top: var(--s-3);
+  max-width: 46ch;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1.02rem;
+}
+
+/* The third line — the reassurance under the ask. Quieter than the promise
+   above it, so the panel reads as one thought and not three. */
+.footer__cta-supporting {
+  margin-top: var(--s-3);
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.9rem;
+}
+
+.footer__cta-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-content: center;
+}
+
+/* --- Columns --------------------------------------------------------------- */
 .footer__grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--s-5);
@@ -28,9 +93,9 @@
   margin-bottom: var(--s-3);
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -67,6 +132,8 @@
 }
 
 .footer__bottom {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -82,5 +149,22 @@
   .footer__grid {
     grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
     gap: var(--s-6);
+  }
+}
+
+@media (min-width: 900px) {
+  .footer__cta {
+    grid-template-columns: 1.3fr auto;
+    align-items: center;
+    gap: var(--s-6);
+    padding: var(--s-6);
+  }
+}
+
+/* Only lift the panel over the seam once the section above it has enough
+   bottom padding (96px from 1024px up) to give the overlap room. */
+@media (min-width: 1024px) {
+  .footer__cta {
+    margin-top: calc(var(--s-7) * -1 - var(--s-5));
   }
 }

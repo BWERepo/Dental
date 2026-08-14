@@ -1,4 +1,5 @@
 .about__grid {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--s-6);
@@ -6,33 +7,74 @@
 }
 
 .about__media {
+  position: relative;
+  z-index: 1;
   overflow: hidden;
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-rest);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-hover);
 }
 
+/* 3:2 matches the source photograph, so a group shot keeps everybody in
+   frame. A portrait crop here lops the people off both ends. */
 .about__media img {
   width: 100%;
   /* height:auto is required, otherwise the img height attribute wins over
      aspect-ratio and the picture renders at its full natural height. */
   height: auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
 }
 
+/* The offset gradient plate behind the photograph. Hidden on small screens,
+   where there is no room for it to read as anything but clutter. */
+.about__plate {
+  display: none;
+}
+
 .about__eyebrow {
-  margin-bottom: var(--s-3);
-  color: var(--c-accent);
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+  color: var(--c-accentInk);
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.about__eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--g-brand);
+}
+
+.about__index {
+  order: -1;
+  background: var(--g-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .about__text {
   margin-top: var(--s-4);
   color: var(--c-inkSoft);
-  font-size: 1.05rem;
+  font-size: 1.06rem;
+}
+
+/* The opening paragraph is set larger and darker, the way a magazine would
+   run a standfirst. */
+.about__text:first-of-type {
+  color: var(--c-ink);
+  font-size: 1.18rem;
+  line-height: 1.55;
 }
 
 .about__link {
@@ -59,7 +101,16 @@
     gap: var(--s-8);
   }
 
-  .about__media img {
-    aspect-ratio: 4 / 5;
+  .about__plate {
+    display: block;
+    position: absolute;
+    z-index: 0;
+    top: var(--s-6);
+    left: calc(var(--s-5) * -1);
+    width: 45%;
+    height: 100%;
+    border-radius: var(--r-xl);
+    background: var(--g-brand);
+    opacity: 0.12;
   }
 }

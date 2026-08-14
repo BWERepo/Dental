@@ -12,7 +12,7 @@ export default function WhyChooseUs() {
     <section className="section" id="why">
       <div className="container">
         <Reveal>
-          <SectionHeading eyebrow={eyebrow} heading={heading} />
+          <SectionHeading index={3} eyebrow={eyebrow} heading={heading} />
         </Reveal>
 
         <div className="why__grid">

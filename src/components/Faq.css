@@ -1,5 +1,5 @@
 .faq__inner {
-  max-width: 820px;
+  max-width: 880px;
 }
 
 .faq__list {
@@ -7,7 +7,27 @@
 }
 
 .faq__item {
+  position: relative;
   border-bottom: 1px solid var(--c-line);
+  transition: border-color var(--t);
+}
+
+/* A gradient rule that draws itself along the open item. */
+.faq__item::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  background: var(--g-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-slow);
+}
+
+.faq__item.is-open::after {
+  transform: scaleX(1);
 }
 
 .faq__item h3 {
@@ -27,9 +47,9 @@
   cursor: pointer;
   text-align: left;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
   color: var(--c-ink);
   transition: color var(--t);
 }
@@ -38,30 +58,45 @@
   color: var(--c-brand);
 }
 
+.faq__item.is-open .faq__question {
+  color: var(--c-brand);
+}
+
 /* Plus sign that becomes a minus when the answer is open */
 .faq__sign {
   position: relative;
   flex: none;
-  width: 18px;
-  height: 18px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--c-brandSoft);
+  transition: background var(--t);
+}
+
+.faq__item.is-open .faq__sign {
+  background: var(--g-brand);
 }
 
 .faq__sign::before,
 .faq__sign::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
+  width: 13px;
   height: 2px;
-  margin-top: -1px;
   border-radius: 2px;
-  background: var(--c-brand);
-  transition: transform var(--t);
+  background: var(--c-brandDark);
+  transition: transform var(--t), background var(--t);
 }
 
 .faq__sign::after {
   transform: rotate(90deg);
+}
+
+.faq__item.is-open .faq__sign::before,
+.faq__item.is-open .faq__sign::after {
+  background: #fff;
 }
 
 .faq__item.is-open .faq__sign::after {
@@ -73,6 +108,14 @@
 }
 
 .faq__answer p {
+  max-width: 62ch;
   color: var(--c-inkSoft);
-  font-size: 1.02rem;
+  font-size: 1.05rem;
+}
+
+@media (min-width: 768px) {
+  .faq__question {
+    font-size: 1.3rem;
+    padding-block: var(--s-5);
+  }
 }

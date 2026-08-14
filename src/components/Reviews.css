@@ -1,0 +1,147 @@
+/* --- Stars ----------------------------------------------------------------- */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.stars .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.stars--light .icon.is-on {
+  color: var(--c-gold);
+}
+
+.stars--light .icon.is-off {
+  color: var(--c-line);
+}
+
+.stars--dark .icon.is-on {
+  color: var(--c-goldBright);
+}
+
+.stars--dark .icon.is-off {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* --- Rating summary -------------------------------------------------------- */
+.reviews__rating {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-6);
+}
+
+.reviews__rating-text {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin: 0;
+  color: var(--c-inkSoft);
+  font-size: 0.98rem;
+}
+
+.reviews__rating-text strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--c-ink);
+}
+
+/* --- The quotes ------------------------------------------------------------
+   A masonry-ish column layout: quotes are different lengths, and forcing them
+   into equal boxes is what makes review sections look padded. */
+.reviews__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  height: 100%;
+  margin: 0;
+  padding: var(--s-4);
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-rest);
+  transition: transform var(--t-slow), box-shadow var(--t-slow);
+}
+
+.review:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-hover);
+}
+
+.review__quote {
+  margin: 0;
+  color: var(--c-ink);
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+/* Real quotation marks, drawn rather than typed, so the punctuation inside the
+   quote is not competing with the decoration. */
+.review__quote::before {
+  content: '“';
+  display: block;
+  margin-bottom: calc(var(--s-2) * -1);
+  color: var(--c-brand);
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.review__by {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-top: auto;
+  padding-top: var(--s-2);
+}
+
+.review__name {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.review__context {
+  color: var(--c-inkSoft);
+  font-size: 0.88rem;
+}
+
+.reviews__note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: 70ch;
+  margin: var(--s-5) auto 0;
+  color: var(--c-inkSoft);
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+@media (min-width: 640px) {
+  .reviews__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .reviews__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-5);
+  }
+
+  .review {
+    padding: var(--s-5);
+  }
+}

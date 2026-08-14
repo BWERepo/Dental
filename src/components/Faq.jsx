@@ -14,7 +14,11 @@ export default function Faq() {
     <section className="section section--neutral" id="faq">
       <div className="container faq__inner">
         <Reveal>
-          <SectionHeading eyebrow="Before you come in" heading="Questions we get asked" />
+          <SectionHeading
+            index={10}
+            eyebrow="Before you come in"
+            heading="Questions we get asked"
+          />
         </Reveal>
 
         <Reveal delay={60}>

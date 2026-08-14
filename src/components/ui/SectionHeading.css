@@ -1,33 +1,70 @@
 .section-heading {
   margin-bottom: var(--s-6);
+  max-width: 900px;
 }
 
 .section-heading--center {
   text-align: center;
+  margin-inline: auto;
 }
 
 .section-heading--center .section-heading__intro {
   margin-inline: auto;
 }
 
+/* The bright aqua is only readable on dark, so eyebrows on light backgrounds
+   use the deep aqua and get the gradient as a small bar instead. */
 .section-heading__eyebrow {
-  margin-bottom: var(--s-3);
-  color: var(--c-accent);
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+  color: var(--c-accentInk);
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.section-heading__eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--g-brand);
+}
+
+/* The editorial section number. `order` puts it ahead of the ::before bar,
+   which the browser would otherwise lay out first. */
+.section-heading__index {
+  order: -1;
+  background: var(--g-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.section-heading--center .section-heading__eyebrow {
+  justify-content: center;
 }
 
 .section-heading__intro {
   margin-top: var(--s-4);
-  max-width: 58ch;
+  max-width: 56ch;
   color: var(--c-inkSoft);
-  font-size: 1.05rem;
+  font-size: 1.08rem;
 }
 
 @media (min-width: 1024px) {
   .section-heading {
     margin-bottom: var(--s-7);
+  }
+
+  .section-heading__intro {
+    font-size: 1.14rem;
   }
 }

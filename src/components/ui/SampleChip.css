@@ -1,0 +1,28 @@
+.sample-chip {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  /* Deliberately plain. This is a disclosure, not decoration — it should read
+     as a stamp on the content rather than as part of the design. */
+  vertical-align: middle;
+}
+
+.sample-chip--light {
+  border: 1px solid var(--c-line);
+  background: #fff;
+  color: var(--c-inkSoft);
+}
+
+.sample-chip--dark {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.82);
+}

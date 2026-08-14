@@ -1,15 +1,15 @@
 .contact__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--s-6);
+  gap: var(--s-5);
   align-items: start;
 }
 
-/* --- Details column -------------------------------------------------------- */
+/* --- The channel list ------------------------------------------------------ */
 .contact__actions {
   display: grid;
   gap: var(--s-2);
-  margin-bottom: var(--s-5);
+  margin-bottom: var(--s-4);
 }
 
 .contact__action {
@@ -18,7 +18,7 @@
   gap: var(--s-3);
   padding: var(--s-3);
   border: 1px solid var(--c-line);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-lg);
   background: #fff;
   color: var(--c-ink);
   transition: border-color var(--t), box-shadow var(--t), transform var(--t);
@@ -26,42 +26,92 @@
 
 .contact__action:hover {
   transform: translateY(-2px);
-  border-color: var(--c-brand);
-  box-shadow: var(--sh-rest);
+  border-color: transparent;
+  box-shadow: var(--sh-hover);
 }
 
-.contact__action span {
+/* The icon sits in a tinted rounded square, which is what stops the list
+   reading as five identical grey rows. */
+.contact__action-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--c-brandSoft);
+  color: var(--c-brandDark);
+  transition: background var(--t), color var(--t);
+}
+
+.contact__action:hover .contact__action-icon {
+  background: var(--g-brand);
+  color: #fff;
+}
+
+/* WhatsApp keeps its own colour so people spot it at a glance. */
+.contact__action--whatsapp .contact__action-icon {
+  background: rgba(31, 175, 84, 0.12);
+  color: #157a3b;
+}
+
+.contact__action--whatsapp:hover .contact__action-icon {
+  background: #1faf54;
+  color: #fff;
+}
+
+.contact__action-text {
   display: flex;
   flex-direction: column;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   color: var(--c-inkSoft);
   overflow-wrap: anywhere;
 }
 
-.contact__action strong {
+.contact__action-text strong {
   font-family: var(--font-display);
   font-size: 0.98rem;
   font-weight: 600;
   color: var(--c-ink);
 }
 
-.contact__icon {
-  flex: none;
-  width: 22px;
-  height: 22px;
+.contact__action-arrow {
+  width: 18px;
+  height: 18px;
+  margin-left: auto;
   color: var(--c-brand);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--t), transform var(--t);
 }
 
+.contact__action:hover .contact__action-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Hours card ------------------------------------------------------------ */
 .contact__hours {
-  margin-bottom: var(--s-5);
   padding: var(--s-4);
-  background: var(--c-neutral);
+  border: 1px solid var(--c-line);
   border-radius: var(--r-lg);
+  background: #fff;
+  box-shadow: var(--sh-rest);
 }
 
 .contact__hours-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
   margin-bottom: var(--s-3);
   font-size: 1.05rem;
+}
+
+.contact__hours-title .icon {
+  width: 19px;
+  height: 19px;
+  color: var(--c-brand);
 }
 
 .contact__hours dl {
@@ -72,7 +122,7 @@
   display: flex;
   justify-content: space-between;
   gap: var(--s-3);
-  padding: 7px 0;
+  padding: 8px 0;
   border-bottom: 1px solid var(--c-line);
   font-size: 0.98rem;
 }
@@ -90,87 +140,25 @@
   font-weight: 600;
 }
 
-/* --- Form ------------------------------------------------------------------ */
-.contact__form,
-.contact__sent {
-  padding: var(--s-4);
-  background: #fff;
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-rest);
+.contact__hours-cta {
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--c-line);
 }
 
-.contact__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-2);
-  margin-bottom: var(--s-4);
-}
-
-.contact__field label {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.contact__field input,
-.contact__field textarea {
-  padding: 13px var(--s-3);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-sm);
-  background: var(--c-bg);
-  font-size: 1rem;
-  transition: border-color var(--t), box-shadow var(--t), background-color var(--t);
-}
-
-.contact__field input:focus,
-.contact__field textarea:focus {
-  outline: none;
-  background: #fff;
-  border-color: var(--c-brand);
-  box-shadow: 0 0 0 3px rgba(15, 86, 201, 0.14);
-}
-
-.contact__field textarea {
-  resize: vertical;
-  min-height: 120px;
-}
-
-.contact__row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0 var(--s-3);
-}
-
-.contact__note {
-  margin-top: var(--s-3);
-  color: var(--c-inkSoft);
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.contact__sent h3 {
+.contact__hours-cta p {
   margin-bottom: var(--s-3);
-}
-
-.contact__sent p {
-  margin-bottom: var(--s-4);
   color: var(--c-inkSoft);
-}
-
-@media (min-width: 560px) {
-  .contact__row {
-    grid-template-columns: 1fr 1fr;
-  }
+  font-size: 0.92rem;
 }
 
 @media (min-width: 900px) {
   .contact__grid {
-    grid-template-columns: 1fr 1.05fr;
-    gap: var(--s-7);
+    grid-template-columns: 1.15fr 1fr;
+    gap: var(--s-6);
   }
 
-  .contact__form,
-  .contact__sent {
+  .contact__hours {
     padding: var(--s-5);
   }
 }

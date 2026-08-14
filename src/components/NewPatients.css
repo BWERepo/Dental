@@ -1,0 +1,149 @@
+.new-patients__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+  align-items: stretch;
+}
+
+.new-patients__grid > * {
+  display: flex;
+}
+
+.np-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--s-4);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-xl);
+  background: #fff;
+  box-shadow: var(--sh-rest);
+  transition: transform var(--t-slow), box-shadow var(--t-slow);
+}
+
+.np-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-hover);
+}
+
+/* The offer. Given the gradient so the eye lands on it first, and the only
+   card on the page allowed to shout. */
+.np-card--featured {
+  position: relative;
+  isolation: isolate;
+  border-color: transparent;
+  background: var(--g-brand);
+  color: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--sh-glow);
+}
+
+.np-card--featured .np-card__title,
+.np-card--featured .np-card__price-value {
+  color: #fff;
+}
+
+.np-card--featured .np-card__kicker {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.np-card--featured .np-card__detail,
+.np-card--featured .np-card__price-note {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.np-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.np-card__kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
+  color: var(--c-accentInk);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.np-card__title {
+  font-size: 1.5rem;
+}
+
+.np-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.np-card__price-value {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.np-card__price-note {
+  color: var(--c-inkSoft);
+  font-size: 0.92rem;
+  /* The old price. Struck through, because saying "normally $310" without
+     showing it crossed out reads as the price you are about to pay. */
+  text-decoration: line-through;
+}
+
+.np-card__detail {
+  margin-top: var(--s-3);
+  color: var(--c-inkSoft);
+  font-size: 1rem;
+}
+
+.np-card__cta {
+  margin-top: auto;
+  padding-top: 15px;
+  align-self: flex-start;
+}
+
+/* Push the button to the bottom of every card so the three line up. */
+.np-card__detail + .np-card__cta {
+  margin-top: var(--s-5);
+}
+
+.new-patients__hours {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  max-width: none;
+  margin-top: var(--s-5);
+  color: var(--c-inkSoft);
+  font-size: 0.95rem;
+}
+
+.new-patients__hours .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--c-brand);
+}
+
+@media (min-width: 700px) {
+  .new-patients__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .new-patients__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-5);
+  }
+
+  .np-card {
+    padding: var(--s-5);
+  }
+}

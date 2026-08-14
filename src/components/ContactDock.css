@@ -1,0 +1,124 @@
+/* --- Phones: a bar pinned across the bottom of the screen ------------------ */
+.dock {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 60;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--s-1);
+  padding: var(--s-2) var(--gutter);
+  padding-bottom: calc(var(--s-2) + env(safe-area-inset-bottom, 0px));
+  background: rgba(255, 255, 255, 0.93);
+  backdrop-filter: saturate(140%) blur(12px);
+  border-top: 1px solid var(--c-line);
+  box-shadow: 0 -6px 26px rgba(6, 42, 38, 0.1);
+}
+
+.dock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 52px;
+  padding: var(--s-1) 2px;
+  border-radius: var(--r-sm);
+  color: var(--c-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background-color var(--t), color var(--t), transform var(--t);
+}
+
+.dock__item:active {
+  transform: scale(0.96);
+}
+
+.dock__item .icon {
+  width: 21px;
+  height: 21px;
+  color: var(--c-brand);
+}
+
+.dock__item--whatsapp .icon {
+  color: #1faf54;
+}
+
+/* The one action we actually want them to take */
+.dock__item--book {
+  background: var(--g-brand);
+  color: #fff;
+  box-shadow: var(--sh-glow);
+}
+
+.dock__item--book .icon {
+  color: #fff;
+}
+
+/* --- Desktop: a floating stack in the bottom-right corner ------------------ */
+@media (min-width: 900px) {
+  .dock {
+    right: var(--s-5);
+    bottom: var(--s-5);
+    left: auto;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: var(--s-2);
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    border-top: 0;
+    box-shadow: none;
+  }
+
+  .dock__item {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    min-height: 0;
+    padding: 0;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--sh-hover);
+    transition: transform var(--t), box-shadow var(--t);
+  }
+
+  .dock__item:hover {
+    transform: translateY(-3px);
+  }
+
+  .dock__item .icon {
+    width: 23px;
+    height: 23px;
+  }
+
+  /* On desktop the label is a tooltip that slides out on hover, so the corner
+     stays quiet until someone reaches for it. */
+  .dock__label {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 10px);
+    padding: 6px var(--s-3);
+    border-radius: 999px;
+    background: var(--c-secondary);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-50%) translateX(8px);
+    pointer-events: none;
+    transition: opacity var(--t), transform var(--t);
+  }
+
+  .dock__item:hover .dock__label,
+  .dock__item:focus-visible .dock__label {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}

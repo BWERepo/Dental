@@ -1,11 +1,43 @@
 import { business } from '../config/business'
+import { smsHref, telHref, whatsappHref } from '../lib/contact'
+import Button from './ui/Button'
 import './Footer.css'
 
 export default function Footer() {
   const year = new Date().getFullYear()
+  const { finalCta, cta } = business
 
   return (
-    <footer className="footer">
+    <footer className="footer grain">
+      {/* The closing panel lifts up over the section above it, so the page
+          ends on the booking ask rather than on small print. */}
+      <div className="container">
+        <div className="footer__cta grain">
+          <div className="footer__cta-copy">
+            <h2 className="footer__cta-heading">{finalCta.heading}</h2>
+            <p>{finalCta.text}</p>
+            {finalCta.supporting && <p className="footer__cta-supporting">{finalCta.supporting}</p>}
+          </div>
+
+          <div className="footer__cta-actions">
+            <Button href="#book" variant="onBrand" icon="calendar">
+              {cta.book}
+            </Button>
+            {whatsappHref() ? (
+              <Button href={whatsappHref()} variant="onDark" icon="whatsapp" external>
+                {cta.whatsapp}
+              </Button>
+            ) : (
+              smsHref() && (
+                <Button href={smsHref()} variant="onDark" icon="sms">
+                  {cta.text}
+                </Button>
+              )
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="container footer__grid">
         <div className="footer__brand">
           <p className="footer__name">{business.name}</p>
@@ -15,21 +47,26 @@ export default function Footer() {
         <div className="footer__block">
           <h2 className="footer__title">Contact</h2>
           <ul>
-            <li>
-              <a href={`tel:${business.phoneLink}`}>{business.phoneDisplay}</a>
-            </li>
-            <li>
-              <a href={`mailto:${business.email}`}>{business.email}</a>
-            </li>
-            {business.whatsapp && (
+            {telHref && (
               <li>
-                <a
-                  href={`https://wa.me/${business.whatsapp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  WhatsApp
+                <a href={telHref}>{business.phoneDisplay}</a>
+              </li>
+            )}
+            {smsHref() && (
+              <li>
+                <a href={smsHref()}>{business.cta.text}</a>
+              </li>
+            )}
+            {whatsappHref() && (
+              <li>
+                <a href={whatsappHref()} target="_blank" rel="noopener noreferrer">
+                  {business.cta.whatsapp}
                 </a>
+              </li>
+            )}
+            {business.email && (
+              <li>
+                <a href={`mailto:${business.email}`}>{business.email}</a>
               </li>
             )}
           </ul>

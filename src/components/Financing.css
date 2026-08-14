@@ -1,0 +1,114 @@
+.financing__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-6);
+  align-items: start;
+}
+
+/* The headline figure, on the dark panel so it reads as the one number that
+   matters in this section. */
+.financing__example {
+  position: relative;
+  isolation: isolate;
+  padding: var(--s-4);
+  border-radius: var(--r-xl);
+  background: var(--g-panel);
+  box-shadow: var(--sh-hover);
+}
+
+.financing__example > * {
+  position: relative;
+  z-index: 1;
+}
+
+.financing__example-amount {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: var(--g-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.financing__example-detail {
+  margin-top: var(--s-2);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1rem;
+}
+
+.financing__example-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.82rem;
+}
+
+.financing__cta {
+  margin-top: var(--s-4);
+}
+
+/* --- The list -------------------------------------------------------------- */
+.financing__options ul {
+  display: grid;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.financing__options li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: #fff;
+  box-shadow: var(--sh-rest);
+  transition: transform var(--t), box-shadow var(--t);
+}
+
+.financing__options li:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sh-hover);
+}
+
+.financing__tick {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--c-brandSoft);
+  color: var(--c-brandDark);
+}
+
+.financing__option-title {
+  font-size: 1.1rem;
+}
+
+.financing__option-detail {
+  margin-top: 2px;
+  color: var(--c-inkSoft);
+  font-size: 0.98rem;
+}
+
+@media (min-width: 900px) {
+  .financing__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-7);
+  }
+
+  .financing__example {
+    padding: var(--s-5);
+  }
+}

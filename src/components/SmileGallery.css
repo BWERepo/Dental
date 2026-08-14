@@ -1,0 +1,181 @@
+.smile-gallery__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-5);
+}
+
+/* --- One before/after frame ------------------------------------------------ */
+.compare__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 8 / 5;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: var(--g-panel);
+  box-shadow: var(--sh-rest);
+  /* The handle is dragged left and right, so let the browser keep vertical
+     scrolling for itself and give horizontal movement to the input. */
+  touch-action: pan-y;
+}
+
+.compare__pane {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--s-4);
+}
+
+.compare__pane--after {
+  background: var(--g-panel);
+}
+
+.smile {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.compare__tag {
+  position: absolute;
+  bottom: var(--s-3);
+  padding: 4px 11px;
+  border-radius: var(--r-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.compare__tag--before {
+  left: var(--s-3);
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.compare__tag--after {
+  left: var(--s-3);
+  background: var(--g-accent);
+  color: #fff;
+}
+
+/* --- The handle ------------------------------------------------------------ */
+.compare__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+}
+
+.compare__grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 42px;
+  height: 42px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(8, 49, 46, 0.4);
+}
+
+/* The two arrows on the grip, drawn with borders so they need no markup. */
+.compare__grip::before,
+.compare__grip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid var(--c-brand);
+  border-right: 2px solid var(--c-brand);
+}
+
+.compare__grip::before {
+  left: 10px;
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+.compare__grip::after {
+  right: 10px;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+/* The input covers the frame and is invisible; only the drawn handle shows. */
+.compare__range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+.compare__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 44px;
+  height: 100%;
+}
+
+.compare__range::-moz-range-thumb {
+  width: 44px;
+  height: 100%;
+  border: 0;
+  opacity: 0;
+}
+
+.compare__range:focus-visible {
+  outline: 3px solid var(--c-brand);
+  outline-offset: 3px;
+  border-radius: var(--r-lg);
+}
+
+/* --- Caption --------------------------------------------------------------- */
+.compare__meta {
+  padding-top: var(--s-3);
+}
+
+.compare__title {
+  font-size: 1.2rem;
+}
+
+.compare__treatments {
+  margin-top: 2px;
+  color: var(--c-inkSoft);
+  font-size: 0.9rem;
+}
+
+.smile-gallery__note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: 72ch;
+  margin-top: var(--s-5);
+  color: var(--c-inkSoft);
+  font-size: 0.88rem;
+}
+
+.smile-gallery__cta {
+  margin-top: var(--s-5);
+}
+
+@media (min-width: 700px) {
+  .smile-gallery__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .smile-gallery__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

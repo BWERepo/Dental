@@ -1,67 +1,102 @@
+/* A split hero. The copy sits on a solid dark teal ground, the portrait keeps
+   its own full-height column. Nothing is laid over the photograph except the
+   glass card, so contrast is guaranteed rather than lucky. */
 .hero {
   position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 90vh;
-  padding-top: calc(var(--nav-h) + var(--s-6));
-  padding-bottom: var(--s-7);
-  overflow: hidden;
+  /* Stacked, the photograph comes first, so the hero itself has to clear the
+     fixed header — the pane is no longer the thing at the top. */
+  padding-top: var(--nav-h);
   background: var(--c-secondary);
   scroll-margin-top: var(--nav-h);
 }
 
-.hero__media {
-  position: absolute;
-  inset: 0;
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
-.hero__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
+.hero__pane {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--s-6) var(--gutter);
+  background: var(--c-secondary);
 }
 
-/* One tonal overlay — deep navy, stronger on the left where the text sits. */
-.hero__media::after {
+/* A soft teal light behind the words so the panel is not a flat block. */
+.hero__pane::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    rgba(10, 31, 60, 0.92) 0%,
-    rgba(10, 31, 60, 0.82) 38%,
-    rgba(10, 31, 60, 0.5) 70%,
-    rgba(10, 31, 60, 0.34) 100%
+  z-index: 0;
+  top: -20%;
+  left: -18%;
+  width: min(640px, 90%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(55, 211, 184, 0.20) 0%,
+    rgba(15, 118, 110, 0.14) 45%,
+    transparent 70%
   );
-}
-
-.hero__inner {
-  position: relative;
-  z-index: 1;
+  pointer-events: none;
 }
 
 .hero__content {
-  max-width: 720px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+/* --- The photograph -------------------------------------------------------- */
+/* Stacked, the photograph leads — on a phone the copy alone is nearly a full
+   screen, so a photo underneath it would never be seen — and the panel needs an
+   explicit height, because height:100% against an auto-height parent falls back
+   to the image's intrinsic ratio. */
+.hero__media {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  order: -1;
+  background: var(--c-secondary);
+}
+
+/* The height sits on the image, not the panel: the hours card is a sibling
+   inside this box, and a fixed-height panel would push it out onto the copy. */
+.hero__media img {
+  width: 100%;
+  height: clamp(260px, 42vh, 400px);
+  object-fit: cover;
+  object-position: 42% center;
 }
 
 .hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
   margin-bottom: var(--s-4);
-  color: #7de3dd;
-  font-size: 0.8rem;
+  padding: 7px var(--s-3);
+  border: 1px solid rgba(55, 211, 184, 0.45);
+  border-radius: var(--r-pill);
+  background: rgba(55, 211, 184, 0.12);
+  color: var(--c-accent);
+  font-size: 0.76rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .hero__title {
   color: #fff;
+  /* A faint lift under the display type so it never sits flat on the photo. */
+  text-shadow: 0 2px 30px rgba(12, 7, 4, 0.5);
 }
 
 .hero__supporting {
   margin-top: var(--s-4);
-  max-width: 52ch;
-  color: rgba(255, 255, 255, 0.86);
+  max-width: 50ch;
+  color: rgba(255, 255, 255, 0.88);
   font-size: 1.15rem;
   line-height: 1.6;
 }
@@ -70,27 +105,147 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-3);
-  margin-top: var(--s-6);
+  margin-top: var(--s-5);
 }
 
-.hero__trust {
+/* --- Message-us row -------------------------------------------------------- */
+.hero__channels {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-3);
-  margin-top: var(--s-6);
-  padding-top: var(--s-4);
-  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  gap: var(--s-2) var(--s-4);
+  margin-top: var(--s-4);
   max-width: none;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 0.95rem;
 }
 
-.hero__trust-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--c-accent);
+.hero__channels-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.88rem;
+}
+
+.hero__channel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: color var(--t), border-color var(--t);
+}
+
+.hero__channel .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.hero__channel:hover {
+  color: var(--c-accent);
+  border-bottom-color: var(--c-accent);
+}
+
+.hero__channel--whatsapp:hover {
+  color: #5cf0a4;
+  border-bottom-color: #5cf0a4;
+}
+
+/* --- Glass card ------------------------------------------------------------
+   On a phone it sits below the photograph as a normal block. From 1024px up it
+   floats on the lower corner of the portrait, where the turquoise wall is
+   plain and nothing important is behind it. */
+.hero__card {
+  padding: var(--s-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--c-secondary);
+}
+
+.hero__card-label {
+  margin-bottom: var(--s-3);
+  color: var(--c-accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero__card-hours {
+  margin: 0;
+}
+
+.hero__card-hours > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.92rem;
+}
+
+.hero__card-hours dt {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.hero__card-hours dd {
+  margin: 0;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hero__card-link {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  transition: color var(--t);
+}
+
+.hero__card-link .icon {
+  width: 17px;
+  height: 17px;
+  color: var(--c-accent);
+}
+
+.hero__card-link:hover {
+  color: #fff;
+}
+
+.hero__card-arrow {
+  margin-left: auto;
+  transition: transform var(--t);
+}
+
+.hero__card-link:hover .hero__card-arrow {
+  transform: translateX(3px);
+}
+
+/* --- Promises band --------------------------------------------------------- */
+.hero__proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-6);
+  margin: var(--s-6) 0 0;
+  padding: var(--s-4) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  list-style: none;
+}
+
+.hero__proof li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.hero__proof .icon {
+  width: 17px;
+  height: 17px;
+  color: var(--c-accent);
 }
 
 @media (min-width: 768px) {
@@ -100,5 +255,60 @@
 
   .hero__actions .btn {
     padding-inline: var(--s-5);
+  }
+
+  .hero__proof li {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero__grid {
+    /* The copy gets the larger share; the portrait stays a portrait. */
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    min-height: 88vh;
+  }
+
+  .hero {
+    padding-top: 0;
+  }
+
+  .hero__pane {
+    padding: calc(var(--nav-h) + var(--s-7)) var(--s-7) var(--s-7)
+      max(var(--gutter), calc((100vw - var(--container)) / 2));
+  }
+
+  .hero__content {
+    margin-inline: 0;
+  }
+
+  .hero__media {
+    display: block;
+    order: 0;
+    min-height: 100%;
+  }
+
+  .hero__media img {
+    height: 100%;
+  }
+
+  .hero__card {
+    position: absolute;
+    right: var(--s-5);
+    bottom: var(--s-5);
+    left: var(--s-5);
+    padding: var(--s-5);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: var(--r-xl);
+    background: rgba(8, 49, 46, 0.62);
+    backdrop-filter: blur(20px) saturate(130%);
+    box-shadow: 0 30px 70px rgba(4, 24, 22, 0.45);
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero__card {
+    left: auto;
+    width: min(360px, 70%);
   }
 }

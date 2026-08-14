@@ -1,0 +1,64 @@
+.emergency {
+  padding-block: var(--s-4);
+}
+
+.emergency__inner {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-xl);
+  /* The one warm gradient on the page. Both stops stay dark enough for white
+     text to hold its contrast. */
+  background: var(--g-warm);
+  box-shadow: 0 24px 60px rgba(122, 42, 60, 0.28);
+}
+
+.emergency__inner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.emergency__mark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.emergency__mark .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.emergency__heading {
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.emergency__detail {
+  margin-top: var(--s-1);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.98rem;
+}
+
+.emergency__cta {
+  justify-self: start;
+}
+
+@media (min-width: 800px) {
+  .emergency__inner {
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-4) var(--s-5);
+  }
+
+  .emergency__cta {
+    justify-self: end;
+  }
+}

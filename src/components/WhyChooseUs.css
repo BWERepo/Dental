@@ -4,33 +4,52 @@
   gap: var(--s-5);
 }
 
+/* The rule above each point is a gradient that only fills in on hover, drawn
+   with ::before so the underlying line can stay put. */
 .why__item {
+  position: relative;
   height: 100%;
   padding-top: var(--s-4);
   border-top: 2px solid var(--c-line);
-  transition: border-color var(--t);
 }
 
-.why__item:hover {
-  border-top-color: var(--c-brand);
+.why__item::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--g-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 320ms ease;
+}
+
+.why__item:hover::before {
+  transform: scaleX(1);
 }
 
 .why__number {
   display: block;
   margin-bottom: var(--s-3);
-  color: var(--c-brand);
+  background: var(--g-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  line-height: 1;
+  letter-spacing: -0.04em;
 }
 
 .why__label {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 .why__detail {
-  margin-top: var(--s-2);
+  margin-top: var(--s-3);
   color: var(--c-inkSoft);
   font-size: 1rem;
 }

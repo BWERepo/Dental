@@ -4,8 +4,11 @@
   gap: var(--s-4);
 }
 
+/* Each cell carries the service's slug as an id, so the header's Services
+   dropdown can jump straight to one card. The offset clears the fixed nav. */
 .services__grid > * {
   display: flex;
+  scroll-margin-top: calc(var(--nav-h) + var(--s-4));
 }
 
 .services__grid > * > .service-card {
@@ -48,9 +51,9 @@
 
 .services__more-list li {
   padding: 7px var(--s-3);
-  background: var(--c-neutral);
+  background: var(--c-brandSoft);
   border-radius: 999px;
-  color: var(--c-ink);
+  color: var(--c-brandDark);
   font-size: 0.95rem;
   font-weight: 500;
 }
