@@ -799,23 +799,25 @@ export const business = {
   },
 
   /* --- Navigation --------------------------------------------------------
-   * `menuOnly: true` keeps a link out of the desktop header but still lists it
-   * in the mobile menu. The header only has room for about eight links before
-   * it starts squeezing the phone number and the Book button, so the sections
-   * that matter least to a first-time visitor live in the menu instead.
+   * The header bar shows only the links marked `primary` — four short, evenly
+   * weighted labels. Everything else lives behind the menu button, which is
+   * present at every screen size. A long row of links with a dropdown in the
+   * middle of it reads as clutter; four does not.
+   *
+   * This list is in page order, which is the order the menu panel uses.
    * ---------------------------------------------------------------------- */
   navLinks: [
     { label: 'Home', href: '/' },
     { label: 'New Patients', href: '/#new-patients' },
-    { label: 'Services', href: '/#services', children: 'services' },
+    { label: 'Services', href: '/#services', children: 'services', primary: true },
     { label: 'Dentist', href: '/#dentist' },
-    { label: 'Reviews', href: '/#reviews' },
+    { label: 'Reviews', href: '/#reviews', primary: true },
     { label: 'Smile Gallery', href: '/#smile-gallery' },
-    { label: 'Our Office', href: '/#tour', menuOnly: true },
+    { label: 'Our Office', href: '/#tour' },
     { label: 'Insurance', href: '/#insurance' },
-    { label: 'Financing', href: '/#financing', menuOnly: true },
-    { label: 'About', href: '/#about', menuOnly: true },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Financing', href: '/#financing' },
+    { label: 'About', href: '/#about', primary: true },
+    { label: 'Contact', href: '/#contact', primary: true },
   ],
 
   /* --- SEO ---------------------------------------------------------------

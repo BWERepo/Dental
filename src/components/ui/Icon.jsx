@@ -20,7 +20,6 @@ const strokeIcons = {
   clock: ['M10 3.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13Z', 'M10 6.4V10l2.6 1.6'],
   check: ['m4.5 10.4 3.4 3.4 7.6-7.9'],
   arrow: ['M4 10h11', 'M11 5.5 15.5 10 11 14.5'],
-  chevron: ['m6 8.25 4 4 4-4'],
   spark: ['M10 3.2 11.6 8 16.4 10 11.6 12 10 16.8 8.4 12 3.6 10 8.4 8Z'],
 
   /* --- One per service, so each card carries its own mark ----------------- */

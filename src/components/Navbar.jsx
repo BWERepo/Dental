@@ -6,10 +6,10 @@ import Icon from './ui/Icon'
 import './Navbar.css'
 
 /**
- * A nav link may name a config array in `children` ("services"), which turns it
- * into a dropdown listing that array. Anything without a `slug` is skipped —
- * the dropdown items jump to a card's id, so an entry with no id to jump to
- * has nowhere to go.
+ * A nav link may name a config array in `children` ("services"), which lists
+ * that array underneath it in the menu panel. Anything without a `slug` is
+ * skipped — the sub-items jump to a card's id, so an entry with no id to jump
+ * to has nowhere to go.
  */
 function submenuFor(link) {
   const items = link.children ? business[link.children] : null
@@ -19,9 +19,10 @@ function submenuFor(link) {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [openSub, setOpenSub] = useState(null)
   const progressRef = useRef(null)
   const { cta } = business
+
+  const primaryLinks = business.navLinks.filter((link) => link.primary)
 
   useEffect(() => {
     const onScroll = () => {
@@ -45,47 +46,30 @@ export default function Navbar() {
     }
   }, [])
 
-  // Close the mobile panel on Escape, and stop the page scrolling behind it.
+  // Close the panel on Escape or a click outside it, and stop the page
+  // scrolling behind it.
   useEffect(() => {
     if (!menuOpen) return
 
     const onKeyDown = (event) => {
       if (event.key === 'Escape') setMenuOpen(false)
     }
+    const onPointerDown = (event) => {
+      if (!event.target?.closest?.('.navbar')) setMenuOpen(false)
+    }
 
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', onKeyDown)
+    document.addEventListener('pointerdown', onPointerDown)
 
     return () => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('pointerdown', onPointerDown)
     }
   }, [menuOpen])
 
-  // A dropdown opened by hover still has to close for a keyboard or touch user,
-  // who has no "mouse leave" to give us.
-  useEffect(() => {
-    if (!openSub) return
-
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') setOpenSub(null)
-    }
-    const onPointerDown = (event) => {
-      if (!event.target?.closest?.('.navbar__parent')) setOpenSub(null)
-    }
-
-    window.addEventListener('keydown', onKeyDown)
-    document.addEventListener('pointerdown', onPointerDown)
-    return () => {
-      window.removeEventListener('keydown', onKeyDown)
-      document.removeEventListener('pointerdown', onPointerDown)
-    }
-  }, [openSub])
-
-  const close = () => {
-    setMenuOpen(false)
-    setOpenSub(null)
-  }
+  const close = () => setMenuOpen(false)
 
   return (
     <header className={`navbar ${scrolled ? 'is-scrolled' : ''}`}>
@@ -95,58 +79,13 @@ export default function Navbar() {
           <span className="navbar__brand-dot" aria-hidden="true" />
         </a>
 
+        {/* Four evenly weighted labels. Everything else is behind the menu. */}
         <nav className="navbar__links" aria-label="Main">
-          {business.navLinks
-            .filter((link) => !link.menuOnly)
-            .map((link) => {
-              const sub = submenuFor(link)
-              if (!sub?.length) {
-                return (
-                  <a key={link.href} href={link.href}>
-                    {link.label}
-                  </a>
-                )
-              }
-
-              const open = openSub === link.href
-              const subId = `navbar-sub-${link.children}`
-
-              return (
-                <span
-                  key={link.href}
-                  className={`navbar__parent ${open ? 'is-open' : ''}`}
-                  onMouseEnter={() => setOpenSub(link.href)}
-                  onMouseLeave={() => setOpenSub(null)}
-                  onFocus={() => setOpenSub(link.href)}
-                >
-                  <a href={link.href}>{link.label}</a>
-
-                  <button
-                    className="navbar__parent-toggle"
-                    type="button"
-                    aria-expanded={open}
-                    aria-controls={subId}
-                    onClick={() => setOpenSub(open ? null : link.href)}
-                  >
-                    <span className="sr-only">
-                      {open ? `Hide ${link.label} menu` : `Show ${link.label} menu`}
-                    </span>
-                    <Icon name="chevron" />
-                  </button>
-
-                  <ul className="navbar__sub" id={subId} hidden={!open}>
-                    {sub.map((item) => (
-                      <li key={item.slug}>
-                        <a href={`/#${item.slug}`} onClick={() => setOpenSub(null)}>
-                          {item.icon && <Icon name={item.icon} />}
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </span>
-              )
-            })}
+          {primaryLinks.map((link) => (
+            <a key={link.href} href={link.href}>
+              {link.label}
+            </a>
+          ))}
         </nav>
 
         <div className="navbar__cta">
@@ -165,7 +104,7 @@ export default function Navbar() {
           className="navbar__toggle"
           type="button"
           aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
+          aria-controls="site-menu"
           onClick={() => setMenuOpen((open) => !open)}
         >
           <span className="sr-only">{menuOpen ? 'Close menu' : 'Open menu'}</span>
@@ -178,61 +117,59 @@ export default function Navbar() {
 
       <span className="navbar__progress" ref={progressRef} aria-hidden="true" />
 
-      <div
-        id="mobile-menu"
-        className={`navbar__panel ${menuOpen ? 'is-open' : ''}`}
-        hidden={!menuOpen}
-      >
-        <nav aria-label="Mobile">
-          {business.navLinks.map((link) => {
-            const sub = submenuFor(link)
+      <div id="site-menu" className={`navbar__panel ${menuOpen ? 'is-open' : ''}`} hidden={!menuOpen}>
+        <div className="navbar__panel-inner">
+          <nav aria-label="All sections">
+            {business.navLinks.map((link) => {
+              const sub = submenuFor(link)
 
-            return (
-              <div key={link.href} className="navbar__panel-group">
-                <a href={link.href} onClick={close}>
-                  {link.label}
-                </a>
+              return (
+                <div key={link.href} className="navbar__panel-group">
+                  <a href={link.href} onClick={close}>
+                    {link.label}
+                  </a>
 
-                {/* No toggle in the panel: it scrolls, so the list just sits open. */}
-                {sub?.length > 0 && (
-                  <ul className="navbar__panel-sub">
-                    {sub.map((item) => (
-                      <li key={item.slug}>
-                        <a href={`/#${item.slug}`} onClick={close}>
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )
-          })}
-        </nav>
+                  {/* No toggle: the panel scrolls, so the list just sits open. */}
+                  {sub?.length > 0 && (
+                    <ul className="navbar__panel-sub">
+                      {sub.map((item) => (
+                        <li key={item.slug}>
+                          <a href={`/#${item.slug}`} onClick={close}>
+                            {item.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )
+            })}
+          </nav>
 
-        <Button href="#book" icon="calendar" className="btn--block" onClick={close}>
-          {cta.book}
-        </Button>
+          <Button href="#book" icon="calendar" className="btn--block" onClick={close}>
+            {cta.book}
+          </Button>
 
-        <div className="navbar__panel-channels">
-          {telHref && (
-            <Button href={telHref} variant="soft" icon="phone" onClick={close}>
-              {cta.call}
-            </Button>
-          )}
-          {smsHref() && (
-            <Button href={smsHref()} variant="soft" icon="sms" onClick={close}>
-              {cta.text}
-            </Button>
-          )}
-          {whatsappHref() && (
-            <Button href={whatsappHref()} variant="whatsapp" icon="whatsapp" external onClick={close}>
-              {cta.whatsapp}
-            </Button>
-          )}
+          <div className="navbar__panel-channels">
+            {telHref && (
+              <Button href={telHref} variant="soft" icon="phone" onClick={close}>
+                {cta.call}
+              </Button>
+            )}
+            {smsHref() && (
+              <Button href={smsHref()} variant="soft" icon="sms" onClick={close}>
+                {cta.text}
+              </Button>
+            )}
+            {whatsappHref() && (
+              <Button href={whatsappHref()} variant="whatsapp" icon="whatsapp" external onClick={close}>
+                {cta.whatsapp}
+              </Button>
+            )}
+          </div>
+
+          <p className="navbar__panel-note">{business.address}</p>
         </div>
-
-        <p className="navbar__panel-note">{business.address}</p>
       </div>
     </header>
   )
