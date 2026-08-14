@@ -1,0 +1,65 @@
+.about__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-6);
+  align-items: center;
+}
+
+.about__media {
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-rest);
+}
+
+.about__media img {
+  width: 100%;
+  /* height:auto is required, otherwise the img height attribute wins over
+     aspect-ratio and the picture renders at its full natural height. */
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.about__eyebrow {
+  margin-bottom: var(--s-3);
+  color: var(--c-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.about__text {
+  margin-top: var(--s-4);
+  color: var(--c-inkSoft);
+  font-size: 1.05rem;
+}
+
+.about__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+  font-weight: 600;
+}
+
+.about__link svg {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--t);
+}
+
+.about__link:hover svg {
+  transform: translateX(4px);
+}
+
+@media (min-width: 900px) {
+  .about__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-8);
+  }
+
+  .about__media img {
+    aspect-ratio: 4 / 5;
+  }
+}

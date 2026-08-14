@@ -1,0 +1,33 @@
+.section-heading {
+  margin-bottom: var(--s-6);
+}
+
+.section-heading--center {
+  text-align: center;
+}
+
+.section-heading--center .section-heading__intro {
+  margin-inline: auto;
+}
+
+.section-heading__eyebrow {
+  margin-bottom: var(--s-3);
+  color: var(--c-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.section-heading__intro {
+  margin-top: var(--s-4);
+  max-width: 58ch;
+  color: var(--c-inkSoft);
+  font-size: 1.05rem;
+}
+
+@media (min-width: 1024px) {
+  .section-heading {
+    margin-bottom: var(--s-7);
+  }
+}

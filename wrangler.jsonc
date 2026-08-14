@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "dental-prototype",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    // Built by `npm run build` before deploying.
+    "directory": "./dist",
+    // Single page app: unknown paths fall back to index.html.
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [
+    {
+      "pattern": "dental.businesswebexpress.com",
+      "custom_domain": true
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

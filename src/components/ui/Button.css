@@ -1,0 +1,69 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 15px var(--s-4);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--t), border-color var(--t), color var(--t),
+    transform var(--t), box-shadow var(--t);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Solid blue — the main action */
+.btn--primary {
+  background: var(--c-brand);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(15, 86, 201, 0.24);
+}
+
+.btn--primary:hover {
+  background: var(--c-brandDark);
+  box-shadow: 0 10px 26px rgba(15, 86, 201, 0.32);
+}
+
+/* Outlined — the quieter action on light backgrounds */
+.btn--secondary {
+  background: transparent;
+  border-color: var(--c-line);
+  color: var(--c-ink);
+}
+
+.btn--secondary:hover {
+  border-color: var(--c-brand);
+  color: var(--c-brand);
+  background: #fff;
+}
+
+/* Outlined for use on top of the hero image */
+.btn--onDark {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+
+.btn--onDark:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--c-secondary);
+}
+
+.btn--block {
+  width: 100%;
+}

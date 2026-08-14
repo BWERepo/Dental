@@ -1,0 +1,104 @@
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 90vh;
+  padding-top: calc(var(--nav-h) + var(--s-6));
+  padding-bottom: var(--s-7);
+  overflow: hidden;
+  background: var(--c-secondary);
+  scroll-margin-top: var(--nav-h);
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+}
+
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+/* One tonal overlay — deep navy, stronger on the left where the text sits. */
+.hero__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(10, 31, 60, 0.92) 0%,
+    rgba(10, 31, 60, 0.82) 38%,
+    rgba(10, 31, 60, 0.5) 70%,
+    rgba(10, 31, 60, 0.34) 100%
+  );
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__content {
+  max-width: 720px;
+}
+
+.hero__eyebrow {
+  margin-bottom: var(--s-4);
+  color: #7de3dd;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero__title {
+  color: #fff;
+}
+
+.hero__supporting {
+  margin-top: var(--s-4);
+  max-width: 52ch;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+
+.hero__trust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  max-width: none;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
+}
+
+.hero__trust-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--c-accent);
+}
+
+@media (min-width: 768px) {
+  .hero__supporting {
+    font-size: 1.25rem;
+  }
+
+  .hero__actions .btn {
+    padding-inline: var(--s-5);
+  }
+}

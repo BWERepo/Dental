@@ -1,0 +1,73 @@
+.services__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+}
+
+.services__grid > * {
+  display: flex;
+}
+
+.services__grid > * > .service-card {
+  width: 100%;
+}
+
+/* Used automatically when there are only one or two services, so a thin grid
+   is never stretched across the page. */
+.services__grid--wide {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.services__more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-4);
+  margin-top: var(--s-6);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--c-line);
+}
+
+.services__more-label {
+  color: var(--c-inkSoft);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.services__more-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.services__more-list li {
+  padding: 7px var(--s-3);
+  background: var(--c-neutral);
+  border-radius: 999px;
+  color: var(--c-ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .services__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .services__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-5);
+  }
+
+  .services__grid--wide {
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  }
+}
