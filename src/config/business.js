@@ -445,11 +445,14 @@ export const business = {
       'Dr. Carter has looked after families in West Knoxville for fifteen years, and still books the longest first appointments of anyone in the practice — because most dental anxiety comes from not knowing what is about to happen.',
       'She takes a conservative view of treatment. If something can be watched rather than drilled, she will tell you so, in writing.',
     ],
+    /* `value` is set large and coloured, `label` small underneath, so the value
+     * has to be a word that can carry that weight — a quantity or a status.
+     * Abbreviations cannot: "Adv." set at 1.5rem reads as a truncation bug.
+     * The row lays itself out from however many entries are here. */
     credentials: [
       { value: '15+', label: 'Years in practice' },
-      { value: 'Adv.', label: 'Cosmetic dentistry' },
       { value: 'Certified', label: 'Invisalign provider' },
-      { value: 'Adv.', label: 'Implant dentistry' },
+      { value: 'Advanced', label: 'Implant & cosmetic training' },
     ],
     cta: 'Meet Dr. Carter',
     /* Stock photography of a real person, standing in for an invented dentist.

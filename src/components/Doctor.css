@@ -101,7 +101,8 @@
 
 .doctor__credentials {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* Follows the number of entries in the config rather than assuming four. */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--s-3);
   margin: var(--s-5) 0 0;
   padding: var(--s-4) 0 0;
@@ -133,9 +134,5 @@
   .doctor__grid {
     grid-template-columns: 0.85fr 1fr;
     gap: var(--s-8);
-  }
-
-  .doctor__credentials {
-    grid-template-columns: repeat(4, 1fr);
   }
 }
