@@ -452,8 +452,15 @@ export const business = {
       { value: 'Adv.', label: 'Implant dentistry' },
     ],
     cta: 'Meet Dr. Carter',
-    image: '',
-    imageAlt: '',
+    /* Stock photography of a real person, standing in for an invented dentist.
+     * The `sample: true` chip on the name plate is what keeps that honest, and
+     * it must stay until this is a real photograph of the real dentist.
+     *
+     * Chosen partly for what it does NOT contain: most stock "female dentist"
+     * shots have another practice's logo and a real clinician's embroidered
+     * name across the scrubs, which cannot sit under a made-up name. */
+    image: '/dentist.jpg',
+    imageAlt: 'A dentist in a lab coat and scrubs, smiling, against a pale studio background',
     sample: true,
   },
 
