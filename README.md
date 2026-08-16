@@ -25,9 +25,12 @@ Three behaviours worth knowing:
 
 - Leave a value empty (`''`) and it disappears cleanly. `whatsapp: ''` removes every WhatsApp button;
   `sms: ''` removes every "Text us" button.
-- `testimonials: []` hides the reviews section entirely. Add real quotes and the section appears.
-  Do not invent reviews.
-- `booking.closedDays` stops people requesting a day nobody is at the practice.
+- `reviews.items: []` hides the reviews section entirely. The quotes shipped with the prototype are
+  invented and labelled as samples — replace them with real, attributable ones, and never invent
+  reviews of your own.
+- `appointment.closedDays` stops people requesting a day nobody is at the practice.
+- `isPrototype: false` removes every "Sample" chip at once. Only set it once real content has
+  replaced the invented dentist, reviews, offer, financing example and insurance results.
 
 ## Contacting the practice
 
@@ -48,14 +51,17 @@ phones and a small stack in the corner on desktop.
 
 ## Appointments
 
-`src/components/Booking.jsx` is the appointment request form: reason, preferred day, preferred time
-window, and how the visitor wants to be contacted back. It validates the date against
-`booking.closedDays` and `booking.maxDaysAhead`.
+`src/components/Booking.jsx` is the appointment request form, and it asks for the six things listed
+in `appointment.steps`: service, dentist, preferred day, preferred time, your details, and how you
+want to be confirmed. It validates the date against `appointment.closedDays` and
+`appointment.maxDaysAhead`, so nobody can request a day the practice is shut.
 
-**There is no server behind it.** Rather than pretending a request was sent, the form turns the
-answers into a written-out message and hands it to the visitor as a ready-to-send text, WhatsApp
-message or email, with the channel they chose promoted to the main button. Wire it to a real booking
-system or endpoint before launch if you want requests stored.
+**There is no server behind it by default.** Rather than pretending a request was sent, the form
+turns the answers into a written-out message and hands it to the visitor as a ready-to-send text,
+WhatsApp message or email, with the channel they chose promoted to the main button.
+
+Set `appointment.endpoint` to a URL and the form POSTs the request there instead, falling back to the
+hand-off if that call fails — a visitor never loses what they typed because a server was down.
 
 ## Running it
 
@@ -97,7 +103,7 @@ src/
   config/business.js      all content, colours, gradients and image URLs
   lib/contact.js          builds every tel/sms/WhatsApp/email link
   components/             one file per section, each with its own CSS
-  components/ui/          Button, Icon, SectionHeading, ServiceCard, Reveal
+  components/ui/          Button, Icon, SectionHeading, ServiceCard, SampleChip, Reveal
   styles/global.css       design tokens (spacing, radius, shadow, type) + base styles
 ```
 
@@ -108,9 +114,15 @@ truth.
 ## Design notes
 
 - Plain CSS only — no UI framework, no CSS-in-JS.
-- The palette is electric violet through magenta, with a bright aqua used only for glow and marks.
-  Both ends of the brand gradient stay dark enough for white text to pass AA, which is why the
-  gradient never runs into the aqua behind words.
+- The palette is deep teal through green, with a bright aqua used only for glow and marks. Both ends
+  of the brand gradient stay dark enough for white text to pass AA, which is why the gradient never
+  runs into the aqua behind words.
+- Anything invented for the demonstration carries a `sample: true` in the config and renders a
+  visible "Sample" chip through `components/ui/SampleChip.jsx`. The dentist has no photograph on
+  purpose: a stock face attached to an invented name and CV is the one shortcut a prototype must not
+  take, so the portrait slot draws her initials instead.
+- The smile gallery is drawn, not photographed. Real before/after patient photography needs that
+  patient's written consent, so the comparison sliders render parametric SVG smiles.
 - `--c-accent` (bright aqua) is for **dark** backgrounds only. On light backgrounds use
   `--c-accentInk`, which is the readable version.
 - Fonts: Sora (headings) and Inter (body), loaded from Google Fonts.

@@ -12,7 +12,7 @@
   /* The one warm gradient on the page. Both stops stay dark enough for white
      text to hold its contrast. */
   background: var(--g-warm);
-  box-shadow: 0 24px 60px rgba(122, 42, 60, 0.28);
+  box-shadow: 0 24px 60px rgba(122, 72, 30, 0.3);
 }
 
 .emergency__inner > * {
