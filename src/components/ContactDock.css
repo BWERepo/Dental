@@ -17,7 +17,14 @@
   box-shadow: 0 -6px 26px rgba(6, 42, 38, 0.1);
 }
 
+/* One of the dock items is a <button> (Text opens a panel) and the rest are
+   links, so the button's own chrome has to be reset back to match. */
 .dock__item {
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;

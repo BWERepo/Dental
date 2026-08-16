@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { business } from '../config/business'
 import { smsHref, telHref, whatsappHref } from '../lib/contact'
+import { servicePath } from '../lib/router'
 import Button from './ui/Button'
 import Icon from './ui/Icon'
 import './Navbar.css'
@@ -74,7 +75,7 @@ export default function Navbar() {
   return (
     <header className={`navbar ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container navbar__inner">
-        <a className="navbar__brand" href="#top">
+        <a className="navbar__brand" href="/">
           {business.shortName}
           <span className="navbar__brand-dot" aria-hidden="true" />
         </a>
@@ -95,7 +96,7 @@ export default function Navbar() {
               {business.phoneDisplay}
             </a>
           )}
-          <Button href="#book" icon="calendar">
+          <Button href="/#book" icon="calendar">
             {cta.book}
           </Button>
         </div>
@@ -134,7 +135,7 @@ export default function Navbar() {
                     <ul className="navbar__panel-sub">
                       {sub.map((item) => (
                         <li key={item.slug}>
-                          <a href={`/#${item.slug}`} onClick={close}>
+                          <a href={servicePath(item.slug)} onClick={close}>
                             {item.name}
                           </a>
                         </li>
@@ -146,7 +147,7 @@ export default function Navbar() {
             })}
           </nav>
 
-          <Button href="#book" icon="calendar" className="btn--block" onClick={close}>
+          <Button href="/#book" icon="calendar" className="btn--block" onClick={close}>
             {cta.book}
           </Button>
 

@@ -1,0 +1,407 @@
+/* --- Service hero ----------------------------------------------------------
+   Same warm grade as the home hero, so a service page reads as the same site
+   rather than a different template. */
+.svc-hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 62vh;
+  padding-top: calc(var(--nav-h) + var(--s-6));
+  padding-bottom: var(--s-6);
+  overflow: hidden;
+  background: var(--c-heroInk);
+}
+
+.svc-hero__media {
+  position: absolute;
+  inset: 0;
+}
+
+.svc-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.svc-hero__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--g-hero);
+}
+
+.svc-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+}
+
+.svc-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.86rem;
+}
+
+.svc-crumbs a {
+  color: rgba(255, 255, 255, 0.82);
+  transition: color var(--t);
+}
+
+.svc-crumbs a:hover {
+  color: var(--c-accent);
+}
+
+.svc-crumbs [aria-current] {
+  color: #fff;
+  font-weight: 600;
+}
+
+.svc-hero__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: var(--s-3);
+  border-radius: 16px;
+  background: var(--g-brand);
+  color: #fff;
+  box-shadow: var(--sh-glow);
+}
+
+.svc-hero--urgent .svc-hero__mark {
+  background: var(--c-danger);
+  box-shadow: 0 10px 30px rgba(198, 35, 104, 0.36);
+}
+
+.svc-hero__mark .icon {
+  width: 28px;
+  height: 28px;
+}
+
+.svc-hero__eyebrow {
+  margin-bottom: var(--s-2);
+  color: var(--c-accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.svc-hero__title {
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(12, 7, 4, 0.5);
+}
+
+.svc-hero__lede {
+  margin-top: var(--s-4);
+  max-width: 52ch;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.12rem;
+}
+
+.svc-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+
+/* --- Overview + benefits ------------------------------------------------------ */
+.svc-overview {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-6);
+  align-items: start;
+}
+
+.svc-overview__text {
+  color: var(--c-inkSoft);
+  font-size: 1.12rem;
+  line-height: 1.7;
+}
+
+.svc-overview__trademark {
+  margin-top: var(--s-4);
+  color: var(--c-inkSoft);
+  font-size: 0.82rem;
+}
+
+.svc-benefits {
+  padding: var(--s-4);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-xl);
+  background: #fff;
+  box-shadow: var(--sh-rest);
+}
+
+.svc-benefits__title {
+  margin-bottom: var(--s-3);
+  font-size: 1.2rem;
+}
+
+.svc-benefits ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.svc-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--c-line);
+  font-size: 0.99rem;
+}
+
+.svc-benefits li:last-child {
+  border-bottom: 0;
+}
+
+.svc-benefits .icon {
+  flex: none;
+  width: 19px;
+  height: 19px;
+  margin-top: 3px;
+  color: var(--c-accentInk);
+}
+
+/* --- Candidacy ------------------------------------------------------------------ */
+.svc-candidates {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+}
+
+.svc-candidate {
+  height: 100%;
+  padding: var(--s-4);
+  border-radius: var(--r-lg);
+  background: #fff;
+  border: 1px solid var(--c-line);
+  transition: transform var(--t-slow), box-shadow var(--t-slow), border-color var(--t);
+}
+
+.svc-candidate:hover {
+  transform: translateY(-4px);
+  border-color: transparent;
+  box-shadow: var(--sh-hover);
+}
+
+.svc-candidate__num {
+  display: block;
+  margin-bottom: var(--s-2);
+  background: var(--g-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.svc-candidate p {
+  color: var(--c-inkSoft);
+  font-size: 1rem;
+}
+
+/* --- Steps ----------------------------------------------------------------------- */
+.svc-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.svc-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  height: 100%;
+  padding: var(--s-4);
+  border-radius: var(--r-lg);
+  background: #fff;
+  border: 1px solid var(--c-line);
+  box-shadow: var(--sh-rest);
+}
+
+.svc-step__num {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--g-brand);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 700;
+  box-shadow: var(--sh-glow);
+}
+
+.svc-step h3 {
+  font-size: 1.1rem;
+}
+
+.svc-step p {
+  margin-top: 3px;
+  color: var(--c-inkSoft);
+  font-size: 0.98rem;
+}
+
+/* --- Other services ---------------------------------------------------------------- */
+.svc-others {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-3);
+}
+
+.svc-other {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  height: 100%;
+  padding: var(--s-4);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: #fff;
+  color: var(--c-ink);
+  transition: transform var(--t-slow), box-shadow var(--t-slow), border-color var(--t);
+}
+
+.svc-other:hover {
+  transform: translateY(-4px);
+  border-color: transparent;
+  box-shadow: var(--sh-hover);
+}
+
+.svc-other__mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--c-brandSoft);
+  color: var(--c-brandDark);
+  transition: background var(--t), color var(--t);
+}
+
+.svc-other:hover .svc-other__mark {
+  background: var(--g-brand);
+  color: #fff;
+}
+
+.svc-other__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.svc-other__body strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.svc-other__body span {
+  color: var(--c-inkSoft);
+  font-size: 0.92rem;
+}
+
+.svc-other__arrow {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-left: auto;
+  color: var(--c-brand);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--t), transform var(--t);
+}
+
+.svc-other:hover .svc-other__arrow {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Closing CTA -------------------------------------------------------------------- */
+.svc-cta {
+  position: relative;
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-5) var(--s-4);
+  border-radius: var(--r-xl);
+  background: var(--g-brand);
+  box-shadow: 0 30px 70px rgba(30, 14, 92, 0.35);
+  overflow: hidden;
+}
+
+.svc-cta > * {
+  position: relative;
+  z-index: 1;
+}
+
+.svc-cta h2 {
+  color: #fff;
+}
+
+.svc-cta p {
+  margin-top: var(--s-2);
+  max-width: 46ch;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.svc-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-content: center;
+}
+
+@media (min-width: 640px) {
+  .svc-candidates {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .svc-steps {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .svc-others {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .svc-hero {
+    min-height: 70vh;
+  }
+
+  .svc-overview {
+    grid-template-columns: 1.35fr 1fr;
+    gap: var(--s-7);
+  }
+
+  .svc-benefits {
+    padding: var(--s-5);
+    position: sticky;
+    top: calc(var(--nav-h) + var(--s-4));
+  }
+
+  .svc-cta {
+    grid-template-columns: 1.3fr auto;
+    align-items: center;
+    gap: var(--s-6);
+    padding: var(--s-6);
+  }
+}

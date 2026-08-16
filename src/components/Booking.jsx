@@ -1,6 +1,17 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { business } from '../config/business'
 import { activeChannels, mailtoHref, smsHref, telHref, whatsappHref } from '../lib/contact'
+import {
+  STEPS,
+  buildSummary,
+  closedDayNames,
+  formatLongDate,
+  getDateBounds,
+  monthGrid,
+  monthLabel,
+  parseInputDate,
+  validateStep,
+} from '../lib/scheduler'
 import Button from './ui/Button'
 import Icon from './ui/Icon'
 import Reveal from './ui/Reveal'
@@ -8,58 +19,32 @@ import SampleChip from './ui/SampleChip'
 import SectionHeading from './ui/SectionHeading'
 import './Booking.css'
 
-const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
-const pad = (value) => String(value).padStart(2, '0')
-
-const toInputDate = (date) =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+const WEEKDAY_INITIALS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
 /**
- * Read a YYYY-MM-DD value as a LOCAL date. `new Date('2026-08-15')` is parsed
- * as UTC, which lands on the wrong day for anyone west of Greenwich.
+ * The six-step appointment scheduler.
+ *
+ * The front end genuinely works — it validates one step at a time, refuses days
+ * the practice is shut, and produces a real request at the end. What it does
+ * not do is reserve anything, because no practice management system is wired up
+ * yet. Point `appointment.endpoint` in the config at a real booking API and the
+ * final step posts to it instead of handing the request back to the visitor.
  */
-function parseInputDate(value) {
-  const [year, month, day] = value.split('-').map(Number)
-  return new Date(year, month - 1, day)
-}
-
-function formatLongDate(value) {
-  return parseInputDate(value).toLocaleDateString(undefined, {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-
-/** "Saturdays and Sundays" — used to explain why a date was rejected. */
-function closedDayNames(closedDays) {
-  const names = [...closedDays]
-    // Sunday is day 0, but it reads last in a week.
-    .sort((a, b) => (a || 7) - (b || 7))
-    .map((day) => `${DAY_NAMES[day]}s`)
-
-  if (names.length <= 1) return names.join('')
-  return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`
-}
-
 export default function Booking() {
-  const { appointment, cta } = business
+  const { appointment } = business
   const channels = useMemo(() => activeChannels(), [])
 
-  const dateBounds = useMemo(() => {
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const last = new Date(today)
-    last.setDate(last.getDate() + appointment.maxDaysAhead)
-    return { today, min: toInputDate(today), max: toInputDate(last) }
-  }, [appointment.maxDaysAhead])
+  const bounds = useMemo(
+    () => getDateBounds(appointment.maxDaysAhead),
+    [appointment.maxDaysAhead],
+  )
 
+  const [stepIndex, setStepIndex] = useState(0)
   const [form, setForm] = useState({
-    service: appointment.services[0]?.id ?? '',
-    provider: appointment.providers[0]?.id ?? '',
+    service: '',
+    provider: '',
     date: '',
-    time: appointment.times[0] ?? '',
+    time: '',
     name: '',
     phone: '',
     email: '',
@@ -71,82 +56,105 @@ export default function Booking() {
   const [request, setRequest] = useState(null)
   const [sending, setSending] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [view, setView] = useState(() => ({
+    year: bounds.today.getFullYear(),
+    month: bounds.today.getMonth(),
+  }))
 
-  const chosenService = appointment.services.find((item) => item.id === form.service)
+  const panelRef = useRef(null)
+  const startedRef = useRef(false)
+
+  const step = STEPS[stepIndex]
+  const validateOptions = { bounds, closedDays: appointment.closedDays }
+
+  // Move focus into the panel on each step change so keyboard and screen-reader
+  // users land on the new content instead of staying on the button they pressed.
+  useEffect(() => {
+    if (!startedRef.current) {
+      startedRef.current = true
+      return
+    }
+    panelRef.current?.focus()
+  }, [stepIndex, request])
+
+  const set = (patch) => {
+    setForm((previous) => ({ ...previous, ...patch }))
+    setErrors((previous) => {
+      const next = { ...previous }
+      Object.keys(patch).forEach((key) => delete next[key])
+      return next
+    })
+  }
 
   const update = (field) => (event) => {
     const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value
-    setForm((previous) => ({ ...previous, [field]: value }))
-    setErrors((previous) => (previous[field] ? { ...previous, [field]: undefined } : previous))
+    set({ [field]: value })
   }
 
-  const validate = () => {
-    const found = {}
-
-    if (!form.name.trim()) found.name = 'We need a name to put on the appointment.'
-    if (!form.phone.trim()) found.phone = 'A phone number, so we can confirm the time.'
-
-    if (!form.date) {
-      found.date = 'Pick the day you would like to come in.'
-    } else {
-      const chosen = parseInputDate(form.date)
-      if (chosen < dateBounds.today) {
-        found.date = 'That day has already passed.'
-      } else if (appointment.closedDays.includes(chosen.getDay())) {
-        found.date = `We are closed on ${closedDayNames(appointment.closedDays)}. Please pick another day.`
-      }
-    }
-
-    if (form.contactBy === 'email' && !form.email.trim()) {
-      found.email = 'Add an email address, or choose another way for us to reply.'
-    }
-
-    return found
+  /** Advance one step, or straight past it when a choice already answers it. */
+  const goNext = () => {
+    const found = validateStep(step.id, form, validateOptions)
+    setErrors(found)
+    if (Object.keys(found).length > 0) return
+    setStepIndex((index) => Math.min(index + 1, STEPS.length - 1))
   }
 
-  const buildSummary = () => {
-    const provider = appointment.providers.find((item) => item.id === form.provider)
-    const channel = channels.find((item) => item.id === form.contactBy)
+  const goBack = () => setStepIndex((index) => Math.max(index - 1, 0))
 
-    const details = [
-      `Name: ${form.name.trim()}`,
-      `Phone: ${form.phone.trim()}`,
-      form.email.trim() && `Email: ${form.email.trim()}`,
-      chosenService && `Appointment: ${chosenService.label} (${chosenService.duration})`,
-      provider && `Dentist: ${provider.name}`,
-      `Preferred day: ${formatLongDate(form.date)}`,
-      form.time && `Preferred time: ${form.time}`,
-      form.newPatient && 'New patient: yes',
-      form.notes.trim() && `Notes: ${form.notes.trim()}`,
-      channel && `Best way to reach me: ${channel.label}`,
-    ].filter(Boolean)
-
-    // Blank line between the greeting and the details, so the message reads
-    // like something a person wrote rather than a form dump.
-    return {
-      summary: `${business.messagePrefill}\n\n${details.join('\n')}`,
-      channel,
-      dayLabel: formatLongDate(form.date),
+  /** Jump back to an earlier step from the rail. Forward jumps are not allowed. */
+  const goTo = (index) => {
+    if (index < stepIndex) {
+      setErrors({})
+      setStepIndex(index)
     }
   }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
+  /** Choosing an option moves the flow on by itself — one tap, not two. */
+  const choose = (patch, { advance = true } = {}) => {
+    set(patch)
+    if (advance) {
+      window.setTimeout(() => setStepIndex((index) => Math.min(index + 1, STEPS.length - 1)), 160)
+    }
+  }
 
-    const found = validate()
+  const shiftMonth = (delta) => {
+    setView(({ year, month }) => {
+      const next = new Date(year, month + delta, 1)
+      return { year: next.getFullYear(), month: next.getMonth() }
+    })
+  }
+
+  const weeks = useMemo(
+    () => monthGrid(view.year, view.month, { ...bounds, closedDays: appointment.closedDays }),
+    [view, bounds, appointment.closedDays],
+  )
+
+  const handleSubmit = async () => {
+    // Re-check every step, in case something was edited after the fact.
+    const found = STEPS.reduce(
+      (all, item) => ({ ...all, ...validateStep(item.id, form, validateOptions) }),
+      {},
+    )
     setErrors(found)
     if (Object.keys(found).length > 0) {
-      // Send focus to the first thing that needs fixing.
-      document.getElementById(`booking-${Object.keys(found)[0]}`)?.focus()
+      const firstBad = STEPS.findIndex(
+        (item) => Object.keys(validateStep(item.id, form, validateOptions)).length > 0,
+      )
+      if (firstBad >= 0) setStepIndex(firstBad)
       return
     }
 
-    const built = buildSummary()
+    const built = buildSummary(form, {
+      services: appointment.services,
+      providers: appointment.providers,
+      channels,
+      prefill: business.messagePrefill,
+    })
+
     setCopied(false)
 
     // With no endpoint configured the request is handed back to the visitor as
-    // a ready-made message. Point `appointment.endpoint` at a real booking API
-    // and the same details are posted to it instead.
+    // a ready-made message, so the booking still reaches the practice.
     if (!appointment.endpoint) {
       setRequest({ ...built, submitted: false })
       return
@@ -162,12 +170,18 @@ export default function Booking() {
       if (!response.ok) throw new Error(`Request failed: ${response.status}`)
       setRequest({ ...built, submitted: true })
     } catch {
-      // Never lose the visitor's typing because a server was unreachable —
-      // fall back to the hand-off so they can still send it themselves.
+      // Never lose the visitor's typing because a server was unreachable.
       setRequest({ ...built, submitted: false, failed: true })
     } finally {
       setSending(false)
     }
+  }
+
+  const restart = () => {
+    setRequest(null)
+    setErrors({})
+    setStepIndex(0)
+    setForm((previous) => ({ ...previous, name: '', phone: '', email: '', notes: '' }))
   }
 
   const copySummary = async () => {
@@ -181,13 +195,8 @@ export default function Booking() {
     }
   }
 
-  /* --- Confirmation --------------------------------------------------------
-   * Nothing is stored anywhere, so instead of pretending the request was sent
-   * we hand it straight to the visitor's phone as a ready-made message.
-   * ---------------------------------------------------------------------- */
   const sendActions = useMemo(() => {
     if (!request) return []
-
     const subject = `Appointment request — ${form.name.trim()}`
     const all = [
       smsHref(request.summary) && {
@@ -211,232 +220,299 @@ export default function Booking() {
       },
     ].filter(Boolean)
 
-    // Whatever they said they preferred goes first, as the loud button.
     const preferred = all.filter((action) => action.id === form.contactBy)
     return [...preferred, ...all.filter((action) => action.id !== form.contactBy)]
   }, [request, form.contactBy, form.name])
 
+  const chosen = {
+    service: appointment.services.find((item) => item.id === form.service),
+    provider: appointment.providers.find((item) => item.id === form.provider),
+  }
+
+  /* --- Confirmed ---------------------------------------------------------- */
+  if (request) {
+    return (
+      <section className="section section--glow booking" id="book">
+        <div className="container">
+          <div className="booking__done" role="status" ref={panelRef} tabIndex={-1}>
+            <span className="booking__done-mark" aria-hidden="true">
+              <Icon name="check" />
+            </span>
+
+            <h2 className="booking__done-title">Appointment requested</h2>
+            <p className="booking__done-text">
+              {request.submitted
+                ? `Thanks ${form.name.trim().split(' ')[0]} — your request is with the practice. We confirm every request the same working day.`
+                : `Thanks ${form.name.trim().split(' ')[0]}. This demonstration has no booking system behind it, so nothing has been reserved — send the request below and it will reach a real inbox.`}
+            </p>
+
+            <dl className="booking__receipt">
+              <div>
+                <dt>Service</dt>
+                <dd>{request.service?.label ?? '—'}</dd>
+              </div>
+              <div>
+                <dt>Dentist</dt>
+                <dd>{request.provider?.name ?? '—'}</dd>
+              </div>
+              <div>
+                <dt>Date</dt>
+                <dd>{request.dayLabel}</dd>
+              </div>
+              <div>
+                <dt>Time</dt>
+                <dd>{form.time}</dd>
+              </div>
+            </dl>
+
+            <p className="booking__demo-note">
+              <SampleChip />
+              {appointment.note}
+            </p>
+
+            <div className="booking__done-actions">
+              {sendActions.map((action, index) => (
+                <Button
+                  key={action.id}
+                  href={action.href}
+                  icon={action.icon}
+                  external={action.external}
+                  variant={index === 0 ? (action.id === 'whatsapp' ? 'whatsapp' : 'primary') : 'soft'}
+                >
+                  {action.label}
+                </Button>
+              ))}
+            </div>
+
+            <div className="booking__done-footer">
+              <button type="button" className="booking__link" onClick={copySummary}>
+                {copied ? 'Copied' : 'Copy the details'}
+              </button>
+              <button type="button" className="booking__link" onClick={restart}>
+                Book another appointment
+              </button>
+              {telHref && (
+                <a className="booking__link" href={telHref}>
+                  Or call {business.phoneDisplay}
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  /* --- The wizard --------------------------------------------------------- */
   return (
     <section className="section section--glow booking" id="book">
       <div className="container">
         <Reveal>
           <SectionHeading
-            index={11}
+            index={5}
             eyebrow={appointment.eyebrow}
             heading={appointment.heading}
             intro={appointment.intro}
           />
         </Reveal>
 
-        <div className="booking__grid">
-          {/* --- What we are going to ask for + the instant channels -------- */}
-          <Reveal className="booking__aside">
-            <ol className="booking__steps">
-              {appointment.steps.map((step, index) => (
-                <li key={step} className="booking__step">
-                  <span className="booking__step-number">{index + 1}</span>
-                  <h3 className="booking__step-label">{step}</h3>
-                </li>
-              ))}
-            </ol>
-
-            <div className="booking__instant">
-              <p className="booking__instant-label">Rather not type it all out?</p>
-              <div className="booking__instant-actions">
-                {telHref && (
-                  <Button href={telHref} variant="soft" icon="phone">
-                    {business.phoneDisplay}
-                  </Button>
-                )}
-                {smsHref() && (
-                  <Button href={smsHref()} variant="soft" icon="sms">
-                    {cta.text}
-                  </Button>
-                )}
-                {whatsappHref() && (
-                  <Button href={whatsappHref()} variant="whatsapp" icon="whatsapp" external>
-                    {cta.whatsapp}
-                  </Button>
-                )}
-              </div>
-            </div>
-          </Reveal>
-
-          {/* --- The form -------------------------------------------------- */}
-          <Reveal className="booking__form-wrap" delay={80}>
-            {request ? (
-              <div className="booking__done" role="status">
-                <span className="booking__done-mark" aria-hidden="true">
-                  <Icon name="check" />
-                </span>
-
-                <h3>
-                  {request.submitted
-                    ? `Request sent, ${form.name.trim().split(' ')[0]}.`
-                    : `One tap left, ${form.name.trim().split(' ')[0]}.`}
-                </h3>
-
-                <p className="booking__done-text">
-                  {request.submitted ? (
-                    <>We have your request and will confirm {request.dayLabel}.</>
-                  ) : (
-                    <>
-                      {request.failed
-                        ? 'We could not reach the booking system just now, so nothing has been sent.'
-                        : 'This prototype has no server behind it yet, so nothing has been sent.'}{' '}
-                      Your request is written out below — send it to us the way you prefer and we
-                      will confirm {request.dayLabel}.
-                    </>
-                  )}
-                </p>
-
-                {!request.submitted && (
-                  <>
-                    <pre className="booking__summary">{request.summary}</pre>
-
-                    <div className="booking__done-actions">
-                      {sendActions.map((action, index) => (
-                        <Button
-                          key={action.id}
-                          href={action.href}
-                          icon={action.icon}
-                          external={action.external}
-                          variant={
-                            index === 0 ? (action.id === 'whatsapp' ? 'whatsapp' : 'primary') : 'soft'
-                          }
-                        >
-                          {action.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                <div className="booking__done-footer">
-                  {!request.submitted && (
-                    <button type="button" className="booking__link" onClick={copySummary}>
-                      {copied ? 'Copied' : 'Copy the details'}
-                    </button>
-                  )}
-                  <button type="button" className="booking__link" onClick={() => setRequest(null)}>
-                    Change something
+        <div className="booking__shell">
+          {/* --- Step rail ---------------------------------------------- */}
+          <ol className="booking__rail" aria-label="Booking steps">
+            {STEPS.map((item, index) => {
+              const state =
+                index === stepIndex ? 'current' : index < stepIndex ? 'done' : 'upcoming'
+              return (
+                <li key={item.id} className={`booking__rail-item is-${state}`}>
+                  <button
+                    type="button"
+                    onClick={() => goTo(index)}
+                    disabled={index >= stepIndex}
+                    aria-current={index === stepIndex ? 'step' : undefined}
+                  >
+                    <span className="booking__rail-dot" aria-hidden="true">
+                      {index < stepIndex ? <Icon name="check" /> : index + 1}
+                    </span>
+                    <span className="booking__rail-label">{item.label}</span>
                   </button>
-                  {telHref && (
-                    <a className="booking__link" href={telHref}>
-                      Or call {business.phoneDisplay}
-                    </a>
-                  )}
+                </li>
+              )
+            })}
+          </ol>
+
+          {/* --- Panel --------------------------------------------------- */}
+          <div className="booking__panel" ref={panelRef} tabIndex={-1} aria-labelledby="booking-step-title">
+            <p className="booking__step-count" aria-hidden="true">
+              Step {stepIndex + 1} of {STEPS.length}
+            </p>
+            <span className="sr-only" aria-live="polite">
+              Step {stepIndex + 1} of {STEPS.length}: {step.label}
+            </span>
+
+            {/* STEP 1 — service */}
+            {step.id === 'service' && (
+              <>
+                <h3 id="booking-step-title">What do you need?</h3>
+                <div className="booking__options" role="radiogroup" aria-label="Service">
+                  {appointment.services.map((item) => (
+                    <label
+                      key={item.id}
+                      className={`booking__option ${item.urgent ? 'booking__option--urgent' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="booking-service"
+                        value={item.id}
+                        checked={form.service === item.id}
+                        onChange={() => choose({ service: item.id })}
+                      />
+                      <span>
+                        <strong>{item.label}</strong>
+                        <span className="booking__option-meta">{item.duration}</span>
+                      </span>
+                    </label>
+                  ))}
                 </div>
-              </div>
-            ) : (
-              <form className="booking__form" onSubmit={handleSubmit} noValidate>
-                {/* 1 — Service */}
-                <fieldset className="booking__fieldset">
-                  <legend>What do you need?</legend>
-                  <div className="booking__pills">
-                    {appointment.services.map((service) => (
-                      <label
-                        key={service.id}
-                        className={`booking__pill ${service.urgent ? 'booking__pill--urgent' : ''}`}
-                      >
-                        <input
-                          type="radio"
-                          name="booking-service"
-                          value={service.id}
-                          checked={form.service === service.id}
-                          onChange={update('service')}
-                        />
+                {errors.service && <p className="booking__error">{errors.service}</p>}
+              </>
+            )}
+
+            {/* STEP 2 — provider */}
+            {step.id === 'provider' && (
+              <>
+                <h3 id="booking-step-title">Who would you like to see?</h3>
+                <div className="booking__options" role="radiogroup" aria-label="Dentist">
+                  {appointment.providers.map((item) => (
+                    <label key={item.id} className="booking__option booking__option--provider">
+                      <input
+                        type="radio"
+                        name="booking-provider"
+                        value={item.id}
+                        checked={form.provider === item.id}
+                        onChange={() => choose({ provider: item.id })}
+                      />
+                      <span>
+                        <span className="booking__avatar" aria-hidden="true">
+                          {item.initials}
+                        </span>
                         <span>
-                          <strong>{service.label}</strong>
-                          {service.duration}
+                          <strong>{item.name}</strong>
+                          <span className="booking__option-meta">{item.role}</span>
                         </span>
-                      </label>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                {errors.provider && <p className="booking__error">{errors.provider}</p>}
+              </>
+            )}
+
+            {/* STEP 3 — date */}
+            {step.id === 'date' && (
+              <>
+                <h3 id="booking-step-title">Pick a day</h3>
+
+                <div className="booking__calendar">
+                  <div className="booking__calendar-head">
+                    <button
+                      type="button"
+                      className="booking__calendar-nav"
+                      onClick={() => shiftMonth(-1)}
+                      aria-label="Previous month"
+                    >
+                      <Icon name="arrow" className="booking__calendar-prev" />
+                    </button>
+                    <p aria-live="polite">{monthLabel(view.year, view.month)}</p>
+                    <button
+                      type="button"
+                      className="booking__calendar-nav"
+                      onClick={() => shiftMonth(1)}
+                      aria-label="Next month"
+                    >
+                      <Icon name="arrow" />
+                    </button>
+                  </div>
+
+                  <div className="booking__calendar-weekdays" aria-hidden="true">
+                    {WEEKDAY_INITIALS.map((initial, index) => (
+                      <span key={`${initial}-${index}`}>{initial}</span>
                     ))}
                   </div>
-                  {chosenService?.urgent && telHref && (
-                    <p className="booking__hint booking__hint--urgent">
-                      In pain today? <a href={telHref}>Call {business.phoneDisplay}</a> instead — we
-                      triage emergencies by phone.
-                    </p>
-                  )}
-                </fieldset>
 
-                {/* 2 — Dentist */}
-                <fieldset className="booking__fieldset">
-                  <legend>Who would you like to see?</legend>
-                  <div className="booking__providers">
-                    {appointment.providers.map((provider) => (
-                      <label key={provider.id} className="booking__provider">
-                        <input
-                          type="radio"
-                          name="booking-provider"
-                          value={provider.id}
-                          checked={form.provider === provider.id}
-                          onChange={update('provider')}
-                        />
-                        <span className="booking__provider-body">
-                          <span className="booking__provider-initials" aria-hidden="true">
-                            {provider.initials}
-                          </span>
-                          <span>
-                            <strong>{provider.name}</strong>
-                            {provider.role}
-                          </span>
-                        </span>
-                      </label>
+                  <div className="booking__calendar-grid" role="grid">
+                    {weeks.map((days, weekIndex) => (
+                      <div className="booking__calendar-week" role="row" key={weekIndex}>
+                        {days.map((day) => (
+                          <button
+                            key={day.value}
+                            type="button"
+                            role="gridcell"
+                            className={`booking__day ${day.outside ? 'is-outside' : ''} ${
+                              form.date === day.value ? 'is-selected' : ''
+                            }`}
+                            disabled={Boolean(day.reason)}
+                            aria-label={parseInputDate(day.value).toLocaleDateString(undefined, {
+                              weekday: 'long',
+                              day: 'numeric',
+                              month: 'long',
+                            })}
+                            aria-selected={form.date === day.value}
+                            onClick={() => choose({ date: day.value })}
+                          >
+                            {day.day}
+                          </button>
+                        ))}
+                      </div>
                     ))}
                   </div>
-                </fieldset>
-
-                {/* 3 — Date */}
-                <div className="booking__field">
-                  <label htmlFor="booking-date">Preferred day</label>
-                  <input
-                    id="booking-date"
-                    type="date"
-                    value={form.date}
-                    min={dateBounds.min}
-                    max={dateBounds.max}
-                    onChange={update('date')}
-                    aria-invalid={Boolean(errors.date)}
-                    aria-describedby={errors.date ? 'booking-date-error' : 'booking-date-hint'}
-                  />
-                  {errors.date ? (
-                    <p className="booking__error" id="booking-date-error">
-                      {errors.date}
-                    </p>
-                  ) : (
-                    <p className="booking__hint" id="booking-date-hint">
-                      Closed {closedDayNames(appointment.closedDays)}.
-                    </p>
-                  )}
                 </div>
 
-                {/* 4 — Time */}
-                <fieldset className="booking__fieldset">
-                  <legend>Preferred time</legend>
-                  <div className="booking__pills booking__pills--tight">
-                    {appointment.times.map((time) => (
-                      <label key={time} className="booking__pill">
-                        <input
-                          type="radio"
-                          name="booking-time"
-                          value={time}
-                          checked={form.time === time}
-                          onChange={update('time')}
-                        />
-                        <span>
-                          <strong>{time}</strong>
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
+                {errors.date ? (
+                  <p className="booking__error">{errors.date}</p>
+                ) : (
+                  <p className="booking__hint">
+                    Closed {closedDayNames(appointment.closedDays)}.
+                  </p>
+                )}
+              </>
+            )}
 
-                {/* 5 — Details */}
+            {/* STEP 4 — time */}
+            {step.id === 'time' && (
+              <>
+                <h3 id="booking-step-title">
+                  Available on {form.date ? formatLongDate(form.date) : 'your chosen day'}
+                </h3>
+                <div className="booking__times" role="radiogroup" aria-label="Appointment time">
+                  {appointment.times.map((time) => (
+                    <label key={time} className="booking__time">
+                      <input
+                        type="radio"
+                        name="booking-time"
+                        value={time}
+                        checked={form.time === time}
+                        onChange={() => choose({ time })}
+                      />
+                      <span>{time}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="booking__hint">
+                  <SampleChip />
+                  Sample availability. A live site shows the practice’s real open slots.
+                </p>
+                {errors.time && <p className="booking__error">{errors.time}</p>}
+              </>
+            )}
+
+            {/* STEP 5 — details */}
+            {step.id === 'details' && (
+              <>
+                <h3 id="booking-step-title">Your details</h3>
+
                 <div className="booking__row">
                   <div className="booking__field">
-                    <label htmlFor="booking-name">Your name</label>
+                    <label htmlFor="booking-name">Full name</label>
                     <input
                       id="booking-name"
                       type="text"
@@ -473,7 +549,7 @@ export default function Booking() {
                 </div>
 
                 <div className="booking__field">
-                  <label htmlFor="booking-email">Email (optional)</label>
+                  <label htmlFor="booking-email">Email {form.contactBy === 'email' ? '' : '(optional)'}</label>
                   <input
                     id="booking-email"
                     type="email"
@@ -490,6 +566,26 @@ export default function Booking() {
                   )}
                 </div>
 
+                {channels.length > 1 && (
+                  <fieldset className="booking__fieldset">
+                    <legend>How should we confirm?</legend>
+                    <div className="booking__times booking__times--tight">
+                      {channels.map((channel) => (
+                        <label key={channel.id} className="booking__time">
+                          <input
+                            type="radio"
+                            name="booking-contact"
+                            value={channel.id}
+                            checked={form.contactBy === channel.id}
+                            onChange={update('contactBy')}
+                          />
+                          <span>{channel.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                )}
+
                 <div className="booking__field">
                   <label htmlFor="booking-notes">Anything we should know? (optional)</label>
                   <textarea
@@ -504,41 +600,70 @@ export default function Booking() {
                   <input type="checkbox" checked={form.newPatient} onChange={update('newPatient')} />
                   <span>This is my first visit to the practice</span>
                 </label>
+              </>
+            )}
 
-                {channels.length > 1 && (
-                  <fieldset className="booking__fieldset">
-                    <legend>How should we confirm?</legend>
-                    <div className="booking__pills booking__pills--tight">
-                      {channels.map((channel) => (
-                        <label key={channel.id} className="booking__pill">
-                          <input
-                            type="radio"
-                            name="booking-contact"
-                            value={channel.id}
-                            checked={form.contactBy === channel.id}
-                            onChange={update('contactBy')}
-                          />
-                          <span>
-                            <strong>{channel.label}</strong>
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                )}
+            {/* STEP 6 — confirm */}
+            {step.id === 'confirm' && (
+              <>
+                <h3 id="booking-step-title">Check and confirm</h3>
 
-                {/* 6 — Confirm */}
-                <Button type="submit" icon="calendar" className="btn--block" disabled={sending}>
-                  {sending ? 'Sending…' : cta.book}
-                </Button>
+                <dl className="booking__receipt">
+                  <div>
+                    <dt>Service</dt>
+                    <dd>{chosen.service?.label ?? '—'}</dd>
+                  </div>
+                  <div>
+                    <dt>Dentist</dt>
+                    <dd>{chosen.provider?.name ?? '—'}</dd>
+                  </div>
+                  <div>
+                    <dt>Date</dt>
+                    <dd>{form.date ? formatLongDate(form.date) : '—'}</dd>
+                  </div>
+                  <div>
+                    <dt>Time</dt>
+                    <dd>{form.time || '—'}</dd>
+                  </div>
+                  <div>
+                    <dt>Name</dt>
+                    <dd>{form.name || '—'}</dd>
+                  </div>
+                  <div>
+                    <dt>Phone</dt>
+                    <dd>{form.phone || '—'}</dd>
+                  </div>
+                </dl>
 
-                <p className="booking__note">
-                  {appointment.sample && <SampleChip />}
+                <p className="booking__demo-note">
+                  <SampleChip />
                   {appointment.note}
                 </p>
-              </form>
+              </>
             )}
-          </Reveal>
+
+            {/* --- Step controls ---------------------------------------- */}
+            <div className="booking__controls">
+              {stepIndex > 0 ? (
+                <button type="button" className="booking__back" onClick={goBack}>
+                  <Icon name="arrow" className="booking__back-icon" />
+                  Back
+                </button>
+              ) : (
+                <span />
+              )}
+
+              {step.id === 'confirm' ? (
+                <Button type="button" icon="calendar" onClick={handleSubmit} disabled={sending}>
+                  {sending ? 'Sending…' : 'Request this appointment'}
+                </Button>
+              ) : (
+                <Button type="button" onClick={goNext}>
+                  Continue
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>

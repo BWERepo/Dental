@@ -1,0 +1,111 @@
+.text-widget__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: var(--s-3);
+  border-radius: 14px;
+  background: var(--g-brand);
+  color: #fff;
+  box-shadow: var(--sh-glow);
+}
+
+.text-widget__mark .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.text-widget__title {
+  font-size: 1.5rem;
+}
+
+.text-widget__intro {
+  margin-top: var(--s-2);
+  margin-bottom: var(--s-4);
+  color: var(--c-inkSoft);
+  font-size: 0.98rem;
+}
+
+.text-widget__options {
+  display: grid;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+}
+
+.text-widget__option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.text-widget__option > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-sm);
+  background: var(--c-bg);
+  font-size: 0.96rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t), color var(--t);
+}
+
+.text-widget__option:hover > span {
+  border-color: var(--c-brand);
+  background: #fff;
+}
+
+.text-widget__tick {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  opacity: 0;
+  transition: opacity var(--t);
+}
+
+.text-widget__option input:checked + span {
+  border-color: transparent;
+  background: var(--g-brand);
+  color: #fff;
+  box-shadow: var(--sh-glow);
+}
+
+.text-widget__option input:checked + span .text-widget__tick {
+  opacity: 1;
+}
+
+.text-widget__option input:focus-visible + span {
+  outline: 3px solid var(--c-brand);
+  outline-offset: 3px;
+}
+
+.text-widget__desktop {
+  padding: var(--s-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: var(--c-neutral);
+}
+
+.text-widget__note {
+  margin-bottom: var(--s-3);
+  color: var(--c-inkSoft);
+  font-size: 0.9rem;
+}
+
+.text-widget__desktop-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s-2);
+}
+
+.text-widget__legal {
+  margin-top: var(--s-3);
+  color: var(--c-inkSoft);
+  font-size: 0.78rem;
+  text-align: center;
+}

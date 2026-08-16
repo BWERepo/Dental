@@ -1,4 +1,5 @@
 import { business } from '../config/business'
+import { servicePath } from '../lib/router'
 import Reveal from './ui/Reveal'
 import SectionHeading from './ui/SectionHeading'
 import ServiceCard from './ui/ServiceCard'
@@ -32,6 +33,7 @@ export default function Services() {
                 icon={service.icon}
                 urgent={service.urgent}
                 index={index + 1}
+                href={servicePath(service.slug)}
               />
             </Reveal>
           ))}

@@ -1,95 +1,364 @@
-.booking__grid {
+.booking__shell {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--s-6);
+  gap: var(--s-4);
   align-items: start;
 }
 
-/* --- Left column: the three steps ----------------------------------------- */
-.booking__steps {
-  display: grid;
-  gap: var(--s-4);
-  margin: 0 0 var(--s-5);
-  padding: 0;
+/* --- Step rail -------------------------------------------------------------
+   A horizontal scroller on phones, a vertical list on desktop. */
+.booking__rail {
+  display: flex;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0 0 var(--s-2);
   list-style: none;
-  counter-reset: step;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-.booking__step {
+.booking__rail::-webkit-scrollbar {
+  display: none;
+}
+
+.booking__rail-item button {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 8px var(--s-3) 8px 8px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--c-inkSoft);
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: default;
+  transition: border-color var(--t), color var(--t), background var(--t);
+}
+
+.booking__rail-item.is-done button {
+  cursor: pointer;
+  color: var(--c-ink);
+}
+
+.booking__rail-item.is-done button:hover {
+  border-color: var(--c-brand);
+  color: var(--c-brand);
+}
+
+.booking__rail-item.is-current button {
+  border-color: transparent;
+  background: var(--g-brand);
+  color: #fff;
+  box-shadow: var(--sh-glow);
+}
+
+.booking__rail-dot {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--c-brandSoft);
+  color: var(--c-brandDark);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.booking__rail-item.is-current .booking__rail-dot {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.booking__rail-item.is-done .booking__rail-dot {
+  background: var(--c-accentInk);
+  color: #fff;
+}
+
+.booking__rail-dot .icon {
+  width: 15px;
+  height: 15px;
+}
+
+/* --- Panel ------------------------------------------------------------------
+   The white card holding whichever step is active. Gradient hairline border,
+   drawn with two backgrounds so the corners stay clean. */
+.booking__panel,
+.booking__done {
+  position: relative;
+  padding: var(--s-4);
+  border: 2px solid transparent;
+  border-radius: var(--r-xl);
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    var(--g-brand) border-box;
+  box-shadow: var(--sh-hover);
+}
+
+.booking__panel:focus-visible,
+.booking__done:focus-visible {
+  outline: 3px solid var(--c-brand);
+  outline-offset: 4px;
+}
+
+.booking__step-count {
+  margin-bottom: var(--s-2);
+  color: var(--c-accentInk);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.booking__panel h3 {
+  margin-bottom: var(--s-4);
+  font-size: 1.5rem;
+}
+
+/* --- Choice lists ----------------------------------------------------------- */
+.booking__options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-2);
+}
+
+.booking__option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.booking__option > span {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: var(--c-bg);
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t), transform var(--t),
+    box-shadow var(--t);
+}
+
+.booking__option > span strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+
+.booking__option-meta {
+  display: block;
+  margin-top: 1px;
+  color: var(--c-inkSoft);
+  font-size: 0.88rem;
+}
+
+.booking__option:hover > span {
+  border-color: var(--c-brand);
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: var(--sh-rest);
+}
+
+.booking__option input:checked + span {
+  border-color: transparent;
+  background: var(--g-brand);
+  box-shadow: var(--sh-glow);
+}
+
+.booking__option input:checked + span strong,
+.booking__option input:checked + span .booking__option-meta {
+  color: #fff;
+}
+
+.booking__option input:focus-visible + span {
+  outline: 3px solid var(--c-brand);
+  outline-offset: 3px;
+}
+
+/* Emergency gets the one warm accent on an otherwise violet page. */
+.booking__option--urgent > span {
+  border-color: rgba(198, 35, 104, 0.32);
+}
+
+.booking__option--provider > span > span {
+  display: flex;
+  align-items: center;
   gap: var(--s-3);
 }
 
-.booking__step-number {
-  display: inline-flex;
+.booking__avatar {
+  display: grid;
+  place-items: center;
   flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: var(--g-brand);
-  color: #fff;
+  background: var(--c-brandSoft);
+  color: var(--c-brandDark);
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.booking__option input:checked + span .booking__avatar {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+/* --- Calendar ---------------------------------------------------------------- */
+.booking__calendar {
+  padding: var(--s-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: var(--c-bg);
+}
+
+.booking__calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+}
+
+.booking__calendar-head p {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.booking__calendar-nav {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--c-line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--c-brand);
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t), color var(--t);
+}
+
+.booking__calendar-nav:hover {
+  border-color: var(--c-brand);
+  background: var(--c-brandSoft);
+}
+
+.booking__calendar-prev {
+  transform: rotate(180deg);
+}
+
+.booking__calendar-weekdays,
+.booking__calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.booking__calendar-weekdays {
+  margin-bottom: var(--s-2);
+}
+
+.booking__calendar-weekdays span {
+  text-align: center;
+  color: var(--c-inkSoft);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.booking__day {
+  aspect-ratio: 1;
+  min-height: 40px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--c-ink);
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--t), color var(--t), border-color var(--t);
+}
+
+.booking__day:hover:not(:disabled) {
+  border-color: var(--c-brand);
+  background: #fff;
+}
+
+.booking__day:disabled {
+  color: var(--c-line);
+  cursor: default;
+}
+
+.booking__day.is-outside {
+  opacity: 0.45;
+}
+
+.booking__day.is-selected {
+  background: var(--g-brand);
+  border-color: transparent;
+  color: #fff;
   font-weight: 700;
   box-shadow: var(--sh-glow);
 }
 
-.booking__step-label {
-  font-size: 1.1rem;
-}
-
-.booking__step-detail {
-  margin-top: 2px;
-  color: var(--c-inkSoft);
-  font-size: 0.98rem;
-}
-
-/* --- Left column: skip the form and just message us ----------------------- */
-.booking__instant {
-  padding: var(--s-4);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-lg);
-  background: #fff;
-  box-shadow: var(--sh-rest);
-}
-
-.booking__instant-label {
-  margin-bottom: var(--s-3);
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.booking__instant-actions {
-  display: flex;
-  flex-wrap: wrap;
+/* --- Times and small pill choices --------------------------------------------- */
+.booking__times {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
   gap: var(--s-2);
 }
 
-.booking__instant-actions .btn {
-  flex: 1 1 auto;
-  padding: 12px var(--s-3);
+.booking__times--tight {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+}
+
+.booking__time input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.booking__time span {
+  display: block;
+  padding: 13px var(--s-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-sm);
+  background: var(--c-bg);
+  text-align: center;
   font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t), color var(--t),
+    transform var(--t), box-shadow var(--t);
 }
 
-/* --- The form card --------------------------------------------------------
-   A gradient hairline around the card: the gradient is painted on the wrapper
-   and the white card sits inside it, which is cheaper than a border-image. */
-.booking__form,
-.booking__done {
-  position: relative;
-  padding: var(--s-4);
-  border-radius: var(--r-lg);
-  background:
-    linear-gradient(#fff, #fff) padding-box,
-    var(--g-brand) border-box;
-  border: 2px solid transparent;
-  box-shadow: var(--sh-hover);
+.booking__time:hover span {
+  border-color: var(--c-brand);
+  transform: translateY(-1px);
 }
 
+.booking__time input:checked + span {
+  border-color: transparent;
+  background: var(--g-brand);
+  color: #fff;
+  box-shadow: var(--sh-glow);
+}
+
+.booking__time input:focus-visible + span {
+  outline: 3px solid var(--c-brand);
+  outline-offset: 3px;
+}
+
+/* --- Fields -------------------------------------------------------------------- */
 .booking__field {
   display: flex;
   flex-direction: column;
@@ -104,7 +373,6 @@
 }
 
 .booking__field input,
-.booking__field select,
 .booking__field textarea {
   width: 100%;
   padding: 13px var(--s-3);
@@ -116,12 +384,11 @@
 }
 
 .booking__field input:focus,
-.booking__field select:focus,
 .booking__field textarea:focus {
   outline: none;
   background: #fff;
   border-color: var(--c-brand);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+  box-shadow: 0 0 0 3px rgba(79, 43, 232, 0.16);
 }
 
 .booking__field input[aria-invalid='true'] {
@@ -131,7 +398,7 @@
 
 .booking__field textarea {
   resize: vertical;
-  min-height: 92px;
+  min-height: 88px;
 }
 
 .booking__row {
@@ -140,21 +407,6 @@
   gap: 0 var(--s-3);
 }
 
-.booking__hint,
-.booking__error {
-  font-size: 0.86rem;
-}
-
-.booking__hint {
-  color: var(--c-inkSoft);
-}
-
-.booking__error {
-  color: var(--c-danger);
-  font-weight: 500;
-}
-
-/* --- Pill choices (time of day, confirmation channel) --------------------- */
 .booking__fieldset {
   margin: 0 0 var(--s-4);
   padding: 0;
@@ -166,182 +418,11 @@
   margin-bottom: var(--s-2);
 }
 
-/* 124px keeps two choices side by side on a 375px phone, and lets all three
-   sit in one row once there is space. */
-.booking__pills {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
-  gap: var(--s-2);
-}
-
-.booking__pills--tight {
-  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
-}
-
-.booking__pill input {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-}
-
-.booking__pill span {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 11px var(--s-3);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-sm);
-  background: var(--c-bg);
-  color: var(--c-inkSoft);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: border-color var(--t), background-color var(--t), color var(--t),
-    box-shadow var(--t), transform var(--t);
-}
-
-.booking__pill span strong {
-  font-family: var(--font-display);
-  font-size: 0.98rem;
-  font-weight: 600;
-  color: var(--c-ink);
-}
-
-.booking__pill:hover span {
-  border-color: var(--c-brand);
-  transform: translateY(-1px);
-}
-
-.booking__pill input:checked + span {
-  background: var(--g-brand);
-  border-color: transparent;
-  color: rgba(255, 255, 255, 0.82);
-  box-shadow: var(--sh-glow);
-}
-
-.booking__pill input:checked + span strong {
-  color: #fff;
-}
-
-.booking__pill input:focus-visible + span {
-  outline: 3px solid var(--c-brand);
-  outline-offset: 3px;
-}
-
-/* Emergency reads warm, so it is visibly not just another appointment type. */
-.booking__pill--urgent input:checked + span {
-  background: var(--c-danger);
-}
-
-.booking__hint--urgent {
-  margin-top: var(--s-2);
-  color: var(--c-danger);
-  font-weight: 500;
-}
-
-.booking__hint--urgent a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* --- Choosing a dentist ----------------------------------------------------
-   Wider than the pill choices because each one carries a name and a role, and
-   a name that wraps mid-word looks like a bug. */
-.booking__providers {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--s-2);
-}
-
-.booking__provider input {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-}
-
-.booking__provider-body {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  padding: 10px var(--s-3);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-sm);
-  background: var(--c-bg);
-  color: var(--c-inkSoft);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: border-color var(--t), background-color var(--t), color var(--t),
-    box-shadow var(--t), transform var(--t);
-}
-
-.booking__provider-body > span {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.booking__provider-body strong {
-  font-family: var(--font-display);
-  font-size: 0.98rem;
-  font-weight: 600;
-  color: var(--c-ink);
-}
-
-.booking__provider-initials {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: var(--c-brandSoft);
-  color: var(--c-brandDark);
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.booking__provider:hover .booking__provider-body {
-  border-color: var(--c-brand);
-  transform: translateY(-1px);
-}
-
-.booking__provider input:checked + .booking__provider-body {
-  background: var(--g-brand);
-  border-color: transparent;
-  color: rgba(255, 255, 255, 0.82);
-  box-shadow: var(--sh-glow);
-}
-
-.booking__provider input:checked + .booking__provider-body strong {
-  color: #fff;
-}
-
-.booking__provider input:checked + .booking__provider-body .booking__provider-initials {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-.booking__provider input:focus-visible + .booking__provider-body {
-  outline: 3px solid var(--c-brand);
-  outline-offset: 3px;
-}
-
-@media (min-width: 560px) {
-  .booking__providers {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* --- Checkbox ------------------------------------------------------------- */
 .booking__check {
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  margin-bottom: var(--s-4);
+  margin-bottom: var(--s-2);
   font-size: 0.95rem;
   cursor: pointer;
 }
@@ -353,20 +434,112 @@
   cursor: pointer;
 }
 
-.booking__note {
+.booking__hint,
+.booking__error {
   margin-top: var(--s-3);
+  font-size: 0.86rem;
+}
+
+.booking__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--c-inkSoft);
+}
+
+.booking__error {
+  color: var(--c-danger);
+  font-weight: 500;
+}
+
+/* --- Controls ------------------------------------------------------------------ */
+.booking__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--c-line);
+}
+
+.booking__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--c-inkSoft);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--t);
+}
+
+.booking__back:hover {
+  color: var(--c-brand);
+}
+
+.booking__back-icon {
+  width: 18px;
+  height: 18px;
+  transform: rotate(180deg);
+}
+
+/* --- Receipt / confirmation ----------------------------------------------------- */
+.booking__receipt {
+  margin: 0 0 var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-lg);
+  background: var(--c-neutral);
+}
+
+.booking__receipt > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--c-line);
+  font-size: 0.96rem;
+}
+
+.booking__receipt > div:last-child {
+  border-bottom: 0;
+}
+
+.booking__receipt dt {
+  color: var(--c-inkSoft);
+}
+
+.booking__receipt dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+.booking__demo-note {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
   color: var(--c-inkSoft);
   font-size: 0.86rem;
+}
+
+.booking__done {
+  max-width: 680px;
+  margin-inline: auto;
   text-align: center;
 }
 
-/* --- Confirmation --------------------------------------------------------- */
 .booking__done-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   margin-bottom: var(--s-3);
   border-radius: 50%;
   background: var(--g-brand);
@@ -375,34 +548,30 @@
 }
 
 .booking__done-mark .icon {
-  width: 24px;
-  height: 24px;
+  width: 27px;
+  height: 27px;
+}
+
+.booking__done-title {
+  font-size: 1.9rem;
 }
 
 .booking__done-text {
-  margin-top: var(--s-2);
+  margin: var(--s-3) auto var(--s-4);
+  max-width: 52ch;
   color: var(--c-inkSoft);
-  font-size: 0.98rem;
+  font-size: 1rem;
 }
 
-.booking__summary {
-  margin: var(--s-4) 0;
-  padding: var(--s-3);
-  max-height: 260px;
-  overflow: auto;
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-sm);
-  background: var(--c-neutral);
-  color: var(--c-ink);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
+.booking__done .booking__receipt,
+.booking__done .booking__demo-note {
+  text-align: left;
 }
 
-/* Wide enough for the labels to stay on one line, and they drop to a stack
-   rather than squeezing when the card is narrow. */
+.booking__done .booking__demo-note {
+  justify-content: center;
+}
+
 .booking__done-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(184px, 1fr));
@@ -412,6 +581,7 @@
 .booking__done-footer {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--s-3);
   margin-top: var(--s-4);
   padding-top: var(--s-3);
@@ -437,16 +607,32 @@
   .booking__row {
     grid-template-columns: 1fr 1fr;
   }
+
+  .booking__options {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-@media (min-width: 900px) {
-  .booking__grid {
-    grid-template-columns: 1fr 1.15fr;
-    gap: var(--s-7);
+@media (min-width: 960px) {
+  .booking__shell {
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: var(--s-6);
   }
 
-  .booking__form,
-  .booking__done {
+  .booking__rail {
+    flex-direction: column;
+    gap: var(--s-1);
+    padding-bottom: 0;
+    overflow: visible;
+    position: sticky;
+    top: calc(var(--nav-h) + var(--s-4));
+  }
+
+  .booking__rail-item button {
+    width: 100%;
+  }
+
+  .booking__panel {
     padding: var(--s-5);
   }
 }

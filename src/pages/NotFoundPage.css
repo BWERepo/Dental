@@ -1,0 +1,66 @@
+.notfound {
+  padding-top: calc(var(--nav-h) + var(--s-7));
+}
+
+.notfound__inner {
+  max-width: 640px;
+}
+
+.notfound__code {
+  margin-bottom: var(--s-3);
+  background: var(--g-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.notfound__text {
+  margin-top: var(--s-4);
+  color: var(--c-inkSoft);
+  font-size: 1.08rem;
+}
+
+.notfound__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+
+.notfound__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin: var(--s-6) 0 0;
+  padding: var(--s-5) 0 0;
+  border-top: 1px solid var(--c-line);
+  list-style: none;
+}
+
+.notfound__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 9px var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--c-brandSoft);
+  color: var(--c-brandDark);
+  font-size: 0.94rem;
+  font-weight: 500;
+  transition: background var(--t), color var(--t);
+}
+
+.notfound__links a:hover {
+  background: var(--g-brand);
+  color: #fff;
+}
+
+.notfound__links .icon {
+  width: 17px;
+  height: 17px;
+}
